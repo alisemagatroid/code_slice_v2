@@ -177,7 +177,7 @@ def create_forward_slice(cgraph: Dict[str, Set[str]],
             if line not in sliced_lines:
                 stack.append(line)
     
-    # 취약함수로 직, 간접적으로 엣지가 발생하는 라인들을 스니펫에 추가한다.
+    # 취약함수 노드로 직, 간접적으로 엣지가 발생하는 라인들을 스니펫에 추가한다.
     additional = True
     while additional:
         additional = False
@@ -216,20 +216,28 @@ def create_forward_slice(cgraph: Dict[str, Set[str]],
     return sliced_lines 
 
 #! csv의 \t으로 구분된 헤더를 인식하기 위해 각 col을 \t을으로 분할한다. 
+# 현재는 csv의 데이터를 전부 가져와서 한번에 처리하는데, 이를 우선 다 받아오고 필요한 기능별로 함수로 구현 
 def extract_csv_data(csv_file_path) -> List[Dict[str, str]]:
     data: List[Dict[str, str]] = []
+    # 일단 파일 열어서 전부 가져오고, 파트별로 나눠서 처리
     with open(csv_file_path) as fp:
         header = fp.readline()
         header = header.strip()
+        
         h_parts = [hp.strip() for hp in header.split('\t')] # 헤더 항목은 리스트로 저장한다.
         
+        # 중첩루프 -> (루프 -> 루프)
         for line in fp:
             line = line.strip()
             instance = {}
             # line에서 col을 '\t'로 분리
             lparts = line.split('\t')
+            
+            if len(h_parts) != len(lparts):
+                continue
             for i, hp in enumerate(h_parts):
                 # type별로 가지고 있는 속성이 다르므로 없는 경우는 공백으로 처리한다.
+                
                 if i < len(lparts):
                     content = lparts[i].strip()
                 else:
@@ -339,7 +347,7 @@ def extract_nodes_info(nodes: List[Dict[str, str]]) -> Tuple[List[str], Dict[str
     Objects:
         line_numbers: 노드가 위치한 ln
         node_id_to_ln: 노드 id에 대응되는 ln(소스코드 상의 해당 노드의 위치)
-        macro_candidate: 매크로 변수에 해당하는 노드id
+        macro_candidate: 매크로 변수에 해당하는 노드 id
         function_range: 소스코드 내 함수들의 범위
     """
     line_numbers: List[str] = []   
@@ -436,22 +444,31 @@ def extract_lines_from_c_source(file_path, all_slices):
 
 # root_dir: 추출하기 위해 필요한 파일 위치, slice_dir: 생성된 코드 스니펫이 저장될 위치
 def process_directory(root_dir, slice_dir):
+    
+    # 함수로 따로 구현하기 
     for sub_dir in os.listdir(root_dir):
         
-        slice_Dir = slice_dir
         sub_dir_path = os.path.join(root_dir, sub_dir)
-        
-        #수집한 취약함수 호출에 해당하는 스니펫을 저장하기 위한 데이터
-        all_data_instance=[]
         
         if not os.path.isdir(sub_dir_path):
             continue
         
         
-        # 동일한 flaw를 가진 여러 유형의 취약점 코드가 포함된 각 디렉토리를 순회, .c, .cpp파일을 확인한다
+        #process_sub_directory
+        slice_Dir = slice_dir
+        
+        
+        #수집한 취약함수 호출에 해당하는 스니펫을 저장하기 위한 데이터
+        all_data_instance=[]
+        
+        
+        
+        # 동일한 flaw를 가진 여러 유형의 취약점 코드가 포함된 각 디렉토리를 순회, .c, .cpp파일을 확인한다.
+        # 어차피 소스는 하나로 정해져있으니까, 
         src_file = os.path.join(sub_dir_path, [f for f in os.listdir(sub_dir_path) if f.endswith('.c') or f.endswith('.cpp')][0])
         
-        # 파일명을 추출한다.
+        # 파일명을 추출을 중복으로 할 필요가 없다.
+        #
         src_filename = os.path.basename(src_file)
         
         nodes_csv = os.path.join(sub_dir_path, 'nodes.csv')
@@ -515,3 +532,7 @@ if __name__ =='__main__':
     root_dir = 'R_dir_CWE121_CWE129_fgets'
     slice_dir = 'slices_Dir'
     process_directory(root_dir, slice_dir)    
+    # a = b'\x41\x09\x42\x09\x09\x44'
+    # s = a.decode("UTF-8")
+    # print(s)
+    # print(len(s.split('\t')))
