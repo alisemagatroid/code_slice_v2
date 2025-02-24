@@ -2,7 +2,7 @@
     코드 개선 후, Model에 training 하기 위해서, snippet에 데이터를 추가해야된다.
     
     snippet에 label 추가하기 위한 calc_label 메소드를 추가
-
+    코드 리팩토링은 0.6 version에서 진행 예정
     
 """
 import os
@@ -456,26 +456,19 @@ def calc_label(parent_method_name):
             label = -1
             return label
         
-        
-        
-        #bad 포함되어있으면 1 good이면 무조건 
+        #bad 포함되어있으면 1 good이면 무조건         
         f_bad = parent_method_name.find("bad") >= 0
-        f_goodG2B = functionName.find("goodG2B") >= 0
-        f_Source = functionName.find("Source") >= 0
-        f_Sink = functionName.find("Sink") >= 0
-
-        if (f_bad and not f_Source and not f_Sink) or (f_goodG2B and not f_Source and not f_Sink):
-            if Sink_flag:
-                label = 0
-            elif Source_flag:
-                label = 1
-            else :
-                if f_goodG2B:
-                    label = 1
-        elif ( (f_bad or f_goodG2B) and f_Sink ):
-            label = 1
-        else:
-            label = 0
+        f_good = parent_method_name.find("good") >= 0
+            
+        if f_bad:
+            label = 1    
+            return label
+        
+        elif f_good:
+            label = 0    
+            return label         
+    
+    # 그 어느쪽도 아닌 메소드의 경우에는 label = -2
     except:
         label = -2
      
@@ -537,27 +530,13 @@ def process_directory(root_dir, slice_dir):
             """
             data_instance = {}
             snippet = []
-            
+    
             sliced_lines = create_forward_slice(combined_graph, slice_ln, parent_method_id, function_range, global_variable)
-           
-            snippet = sorted(set(sliced_lines), key=int)
+            snippet = sorted(set(sliced_lines), key=int)  
             
             cwe_id = get_CWE(src_filename)
-            
-            """ 여기쯤에서 label_calc 메소드 호출
-            
-                취약함수가 호출 된 메소드를 기반으로 메소드 이름에 따라 label을 계산하는 것으로 확인된다.
-                
-                현재 수집과정에서, Source, Sink flag를 고려하진 않음
-            
-            
-            """
-            
-            label = calc_label(parent_method_name)
-            
-            
-                        
             all_code_slices = extract_lines_from_c_source(src_file, snippet)
+            label = calc_label(parent_method_name)
                         
             if cwe_id:
                 data_instance['CWE-ID'] = 'CWE-' + cwe_id
@@ -566,7 +545,9 @@ def process_directory(root_dir, slice_dir):
 
             data_instance['criterion'] = function_name
             data_instance['line'] = slice_ln
+            data_instance['label'] = label
             data_instance['slices'] = all_code_slices
+            
             
             all_data_instance.append(data_instance)
     

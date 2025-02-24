@@ -5,6 +5,7 @@ import os
 import json
 import re 
 import warnings
+import glob
 from typing import Dict, Set, List, Tuple
 
 warnings.filterwarnings('ignore')
@@ -217,9 +218,11 @@ def create_forward_slice(cgraph: Dict[str, Set[str]],
 
 #! csv의 \t으로 구분된 헤더를 인식하기 위해 각 col을 \t을으로 분할한다. 
 # 현재는 csv의 데이터를 전부 가져와서 한번에 처리하는데, 이를 우선 다 받아오고 필요한 기능별로 함수로 구현 
+# 특정 행이 이상하게 잡혀서... 크기는 분명 8로 잡히는게 맞으니까 한번 다시 ㄱㄱㄱ
 def extract_csv_data(csv_file_path) -> List[Dict[str, str]]:
     data: List[Dict[str, str]] = []
     # 일단 파일 열어서 전부 가져오고, 파트별로 나눠서 처리
+    # readline의 경우는 메모리에 올리기 때문에, csv 파일의 크기가 커질경우 로직을 변경해야한다.
     with open(csv_file_path) as fp:
         header = fp.readline()
         header = header.strip()
@@ -233,8 +236,6 @@ def extract_csv_data(csv_file_path) -> List[Dict[str, str]]:
             # line에서 col을 '\t'로 분리
             lparts = line.split('\t')
             
-            if len(h_parts) != len(lparts):
-                continue
             for i, hp in enumerate(h_parts):
                 # type별로 가지고 있는 속성이 다르므로 없는 경우는 공백으로 처리한다.
                 
@@ -417,6 +418,9 @@ def search_function_call(nodes) -> Set[Tuple[str, int, str]]:
                 function_calls.add((function_name, line_no, parent_method_id))
     return function_calls
 
+
+
+
 # 해당 스니펫의 CWE 유형을 소스 코드 이름에서 추출한다.
 def get_CWE(filename):
     CWEID = filename.split('_')[0]
@@ -442,57 +446,60 @@ def extract_lines_from_c_source(file_path, all_slices):
         print(f'An error occurred: {e}')
     return extracted_lines
 
+
+def process_sub_directory(root_dir) -> List:
+    
+    sub_dirs: List[str] = []
+
+    for dir in os.listdir(root_dir):
+        sub_dirs.append(dir)     
+    return sub_dirs
+
+
 # root_dir: 추출하기 위해 필요한 파일 위치, slice_dir: 생성된 코드 스니펫이 저장될 위치
 def process_directory(root_dir, slice_dir):
     
     # 함수로 따로 구현하기 
-    for sub_dir in os.listdir(root_dir):
+    
+    # rood_dir 하위의 디렉토리들을 리스트화
+    sub_dirs = process_sub_directory(root_dir)
+    
+    #process_sub_directory
+    slice_Dir = slice_dir
+
+    
+    for sub_dir in sub_dirs: 
         
         sub_dir_path = os.path.join(root_dir, sub_dir)
         
-        if not os.path.isdir(sub_dir_path):
-            continue
-        
-        
-        #process_sub_directory
-        slice_Dir = slice_dir
-        
-        
+
         #수집한 취약함수 호출에 해당하는 스니펫을 저장하기 위한 데이터
         all_data_instance=[]
-        
-        
-        
-        # 동일한 flaw를 가진 여러 유형의 취약점 코드가 포함된 각 디렉토리를 순회, .c, .cpp파일을 확인한다.
-        # 어차피 소스는 하나로 정해져있으니까, 
+
         src_file = os.path.join(sub_dir_path, [f for f in os.listdir(sub_dir_path) if f.endswith('.c') or f.endswith('.cpp')][0])
-        
-        # 파일명을 추출을 중복으로 할 필요가 없다.
-        #
         src_filename = os.path.basename(src_file)
-        
+
         nodes_csv = os.path.join(sub_dir_path, 'nodes.csv')
         edges_csv = os.path.join(sub_dir_path, 'edges.csv')
-        
+
         # nodes, edges에 대한 데이터 수집을 위해 오브젝트화 한다.
         nodes = extract_csv_data(nodes_csv)
         edges = extract_csv_data(edges_csv) 
-        
+
         # 취약함수 호출 지점을 수집하기 위한 메소드 호출한다.
         call_lines = search_function_call(nodes)      
-        
+
         # nodes를 순회하면서 슬라이스 추출에 필요한 요소들을 수집한다.
         line_numbers, node_id_to_ln, macro_candidate, function_range = extract_nodes_info(nodes)
-         
+
         # edges를 순회하면서, 슬라이스 추출에 필요한 관계성을 확인 후 인접리스트를 생성한다.
         adjacency_list, global_variable = create_adjacency_list(line_numbers, node_id_to_ln, edges, macro_candidate, function_range)              
-        
+
         # edge type별로 수집된 인접리스트 병합한다.
         combined_graph = combine_adjacency_list(adjacency_list)   
-
         # 수집된 취약함수 호출 라인하나당 스니펫을 생성한다.
         for function_name, slice_ln, parent_method_id in call_lines:
-            
+
             """ 코드 스니펫 구조
                 CWE-ID: '파일이름으로 부터 추출한 CWE-ID' 
                 criterion: '호출된 취약 함수' 
@@ -501,28 +508,26 @@ def process_directory(root_dir, slice_dir):
             """
             data_instance = {}
             snippet = []
-            
+
             sliced_lines = create_forward_slice(combined_graph, slice_ln, parent_method_id, function_range, global_variable)
-           
+
             snippet = sorted(set(sliced_lines), key=int)
-            
+
             cwe_id = get_CWE(src_filename)
-            
+
             all_code_slices = extract_lines_from_c_source(src_file, snippet)
-                        
+
             if cwe_id:
                 data_instance['CWE-ID'] = 'CWE-' + cwe_id
             else:
                 data_instance['CWE-ID'] = 'CWE-Unknown'
-
             data_instance['criterion'] = function_name
             data_instance['line'] = slice_ln
             data_instance['slices'] = all_code_slices
-            
-            all_data_instance.append(data_instance)
-    
-        output_path = os.path.join(slice_Dir, f'slices_{sub_dir}.json')
 
+            all_data_instance.append(data_instance)
+
+        output_path = os.path.join(slice_Dir, f'slices_{sub_dir}.json')
         print(f'Attempting to write to: {output_path}')
         with open(output_path, 'w') as json_file:
             json.dump(all_data_instance, json_file)   
