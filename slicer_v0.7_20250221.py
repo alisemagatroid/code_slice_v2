@@ -459,8 +459,6 @@ def calc_label(parent_method_name):
         
         
         #bad 포함되어있으면 1 good이면 무조건 
-        
-        
         f_bad = parent_method_name.find("bad") >= 0
         f_goodG2B = functionName.find("goodG2B") >= 0
         f_Source = functionName.find("Source") >= 0
