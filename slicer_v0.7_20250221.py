@@ -458,13 +458,9 @@ def calc_label(parent_method_name):
         
         
         
-        #bad 포함되어있으면 1 good이면 무조건 
-        
-        
+        #bad 포함되어있으면 1 good이면 무조건         
         f_bad = parent_method_name.find("bad") >= 0
-        f_goodG2B = functionName.find("goodG2B") >= 0
-        f_Source = functionName.find("Source") >= 0
-        f_Sink = functionName.find("Sink") >= 0
+        f_good = parent_method_name.find("good") >= 0
 
         if (f_bad and not f_Source and not f_Sink) or (f_goodG2B and not f_Source and not f_Sink):
             if Sink_flag:
