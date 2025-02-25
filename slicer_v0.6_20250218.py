@@ -218,33 +218,41 @@ def create_forward_slice(cgraph: Dict[str, Set[str]],
 
 #! csv의 \t으로 구분된 헤더를 인식하기 위해 각 col을 \t을으로 분할한다. 
 # 현재는 csv의 데이터를 전부 가져와서 한번에 처리하는데, 이를 우선 다 받아오고 필요한 기능별로 함수로 구현 
-# 특정 행이 이상하게 잡혀서... 크기는 분명 8로 잡히는게 맞으니까 한번 다시 ㄱㄱㄱ
+    """
+        헤더, 데이터를 따로 리스트로 받고 
+        
+        후에 data에 값을 추가하는 것은 따로 처리한다.
+
+        cpg의 csv파일을 생성할때, 하나의 파일의 크기가 크지 않을것으로 예상되기에, 리스트화 해서 반복하는 로직으로 수정했다.
+    """
 def extract_csv_data(csv_file_path) -> List[Dict[str, str]]:
     data: List[Dict[str, str]] = []
-    # 일단 파일 열어서 전부 가져오고, 파트별로 나눠서 처리
-    # readline의 경우는 메모리에 올리기 때문에, csv 파일의 크기가 커질경우 로직을 변경해야한다.
+ 
     with open(csv_file_path) as fp:
+        # 한줄 읽고
         header = fp.readline()
         header = header.strip()
         
-        h_parts = [hp.strip() for hp in header.split('\t')] # 헤더 항목은 리스트로 저장한다.
+        h_parts = [] 
         
-        # 중첩루프 -> (루프 -> 루프)
+        for hp in header.split('\t'):
+            h_parts.append(hp.strip())
+        
+        l_parts = []
+        
         for line in fp:
             line = line.strip()
+            l_parts.append(line.split('\t'))
+    
+        for line in l_parts:
             instance = {}
-            # line에서 col을 '\t'로 분리
-            lparts = line.split('\t')
-            
-            for i, hp in enumerate(h_parts):
+            for i in range(len(h_parts)):
                 # type별로 가지고 있는 속성이 다르므로 없는 경우는 공백으로 처리한다.
-                
-                if i < len(lparts):
-                    content = lparts[i].strip()
+                if i < len(line):
+                    content = line[i].strip()
                 else:
                     content = ''
-                instance[hp] = content
-                
+                instance[h_parts[i]] = content
             data.append(instance)
         return data
 
@@ -357,7 +365,8 @@ def extract_nodes_info(nodes: List[Dict[str, str]]) -> Tuple[List[str], Dict[str
     function_range: Dict[str, List[Set[str]]] = {} 
 
     #
-    for _, node in enumerate(nodes):
+    for node in nodes:
+        # 이미 모든 nodes.csv의 행에는 key값은 무조건 존재한다.
         if 'key' in node:
             node_id = node['key'].strip()
             
@@ -418,9 +427,6 @@ def search_function_call(nodes) -> Set[Tuple[str, int, str]]:
                 function_calls.add((function_name, line_no, parent_method_id))
     return function_calls
 
-
-
-
 # 해당 스니펫의 CWE 유형을 소스 코드 이름에서 추출한다.
 def get_CWE(filename):
     CWEID = filename.split('_')[0]
@@ -446,41 +452,40 @@ def extract_lines_from_c_source(file_path, all_slices):
         print(f'An error occurred: {e}')
     return extracted_lines
 
-
 def process_sub_directory(root_dir) -> List:
-    
     sub_dirs: List[str] = []
-
+    
     for dir in os.listdir(root_dir):
-        sub_dirs.append(dir)     
+        sub_dirs.append(dir)      
     return sub_dirs
+
+# 서브 디렉토리 내에서 파일을 받아온다.
+def load_files(sub_dir_path):
+    src_file = os.path.join(sub_dir_path, [f for f in os.listdir(sub_dir_path) if f.endswith('.c') or f.endswith('.cpp')][0])
+    nodes_csv = os.path.join(sub_dir_path, 'nodes.csv')
+    edges_csv = os.path.join(sub_dir_path, 'edges.csv')
+    
+    return src_file, nodes_csv, edges_csv
 
 
 # root_dir: 추출하기 위해 필요한 파일 위치, slice_dir: 생성된 코드 스니펫이 저장될 위치
 def process_directory(root_dir, slice_dir):
-    
-    # 함수로 따로 구현하기 
-    
+   
     # rood_dir 하위의 디렉토리들을 리스트화
     sub_dirs = process_sub_directory(root_dir)
-    
-    #process_sub_directory
+  
     slice_Dir = slice_dir
 
-    
+    #process_sub_directory: 디렉토리 하나씩 처리 
     for sub_dir in sub_dirs: 
+        
+        all_data_instance=[]
         
         sub_dir_path = os.path.join(root_dir, sub_dir)
         
-
-        #수집한 취약함수 호출에 해당하는 스니펫을 저장하기 위한 데이터
-        all_data_instance=[]
-
-        src_file = os.path.join(sub_dir_path, [f for f in os.listdir(sub_dir_path) if f.endswith('.c') or f.endswith('.cpp')][0])
+        src_file, nodes_csv, edges_csv = load_files(sub_dir_path)
+        
         src_filename = os.path.basename(src_file)
-
-        nodes_csv = os.path.join(sub_dir_path, 'nodes.csv')
-        edges_csv = os.path.join(sub_dir_path, 'edges.csv')
 
         # nodes, edges에 대한 데이터 수집을 위해 오브젝트화 한다.
         nodes = extract_csv_data(nodes_csv)
@@ -537,7 +542,11 @@ if __name__ =='__main__':
     root_dir = 'R_dir_CWE121_CWE129_fgets'
     slice_dir = 'slices_Dir'
     process_directory(root_dir, slice_dir)    
-    # a = b'\x41\x09\x42\x09\x09\x44'
-    # s = a.decode("UTF-8")
-    # print(s)
-    # print(len(s.split('\t')))
+    
+    """
+        a = b'\x41\x09\x42\x09\x09\x44'
+        s = a.decode("UTF-8")
+        print(s)
+        # 4r가 나오는걸 보면 음...
+        print(len(s.split('\t')))
+    """
