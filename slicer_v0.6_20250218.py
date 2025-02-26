@@ -4,6 +4,13 @@
     
     250225
     지금 dir 내부의 파일이 고정되어있는 상태, 객체지향으로 바꿀 여지가 다분하다...
+    
+    
+    250226
+    extract_node_info의 function_range의 데이터 type, tuple로 변경
+    Dict .get, .keys 차이 복습
+    
+    
 """
 import os
 import json
@@ -375,6 +382,7 @@ def create_adjacency_list(line_numbers: List[str],
     return adjacency_list, global_variable
 
 # 추출한 nodes에서 필요한 노드 데이터를 추출한다.
+# type hint 수정
 def extract_nodes_info(nodes: List[Dict[str, str]]) -> Tuple[List[str], Dict[str, str], List[str], Dict[str, List[Set[str]]]]:
     """사용하는 데이터
     Objects:
@@ -394,50 +402,49 @@ def extract_nodes_info(nodes: List[Dict[str, str]]) -> Tuple[List[str], Dict[str
         if 'key' in node:
             node_id = node['key']
         # end if
-
+        node_type = node['type']
+        node_loc = node['location']
         # BLOCK Type 노드의 경우 불필요한 종속성 엣지가 많이 존재하여, skip
-        if node['type'] == 'BLOCK':
+        if node_type == 'BLOCK':
             continue
         # end if
         
         # METHOD 노드에서, line number의 값을 가지면서 외부에서 정의되었다고 표시되는 METHOD 노드는 매크로 변수, 함수 뿐이다.
         # 이러면 지금 값의 존재 유무만 확인인
-        if node['type'] == 'METHOD' and node['isExternal'] == 'True' and node['location'] != '':
+        
+        #.get으로 가져오는 거랑 .key()로 확인 하는거랑 처리가 다르다.(Dict 함수 참고)
+        if node_type == 'METHOD' and node['isExternal'] == 'True' and len(node_loc) > 0:
             macro_candidate.append(node_id)
         # end if
 
         # line number가 확인되는 노드
         # 지금은 key가 있는지 확인, 우선 아예 값이 없는 경우가 아니면 조건을 통과하고 ''인 경우 무시한다.
-        if 'location' in node.keys() and node['location'] != '':
-            line_num = node['location']
-            line_numbers.append(line_num)
-            node_id_to_ln[node_id] = line_num
+        if len(node_loc) > 0:
+            line_numbers.append(node_loc)
+            node_id_to_ln[node_id] = node_loc
         # end if
 
         # 내부에서 선언, 정의된 METHOD 노드는 속성 값으로 line의 시작과 끝을 가지고 있따.
-        if 'location' and 'locationEnd' in node.keys():
+        if 'locationEnd' in node:
             line_num_end = node['locationEnd']
 
             # line number가 확인되지 않거나, 전역에 해당하는 METHOD 노드는 skip
             # 현재 하나하나 문자열 비교를 진행하기 때문에,,, 비효율적일지도...?
-            if line_num_end == '' or node['name'] == '<global>':
+            if len(line_num_end) == 0 or node['name'] == '<global>':
                 continue
+            
+            function_range[node_id] = (node_loc, line_num_end)
 
-            method_start = line_num
-            method_end = line_num_end
-            function_range[node_id] = [set(), set()]
-            function_range[node_id][0].add(method_start)
-            function_range[node_id][1].add(method_end)
             #end if
         # end if
     # end for
-    return line_numbers, node_id_to_ln, macro_candidate, function_range
+    return (line_numbers, node_id_to_ln, macro_candidate, function_range)
 
 # 취약 함수가 호출된 노드에 대한 정보를 추출한다.
 def search_function_call(nodes) -> Set[Tuple[str, int, str]]:
     # 취약함수 호출 지점을 나타내는 오브젝트
     # 같은 라인에 동일한 함수 호출이 존재할 수 있음, Dict로 변경 key: 노드id, 값은 tuple로 
-    function_calls: Dict[str, Tuple[str, int, str]] = {}
+    function_calls: Dict[str, Tuple[str, int, str]] = Dict()
 
     # 모든 노드에 대해서 순환
     for node in nodes:
@@ -457,11 +464,9 @@ def search_function_call(nodes) -> Set[Tuple[str, int, str]]:
             # end if
 
             if function_name in L_FUNCS:
-                
                 node_id = node['key']
                 line_no = int(node['location'])
                 parent_method_id = node['functionId']
-                
                 function_calls[node_id] = (function_name, line_no, parent_method_id)
             # end if
         # end if
@@ -544,7 +549,7 @@ def process_directory(root_dir, slice_dir):
         call_lines = search_function_call(nodes)
 
         # nodes를 순회하면서 슬라이스 추출에 필요한 요소들을 수집한다.
-        line_numbers, node_id_to_ln, macro_candidate, function_range = extract_nodes_info(nodes)
+        (line_numbers, node_id_to_ln, macro_candidate, function_range) = extract_nodes_info(nodes)
 
         # edges를 순회하면서, 슬라이스 추출에 필요한 관계성을 확인 후 인접리스트를 생성한다.
         adjacency_list, global_variable = create_adjacency_list(
@@ -594,9 +599,15 @@ def process_directory(root_dir, slice_dir):
 
 # root_dir: 작업할 파일, slice_dir: 슬라이스 저장할 파일
 if __name__ == '__main__':
-    root_dir = 'R_dir_CWE121_CWE129_fgets'
-    slice_dir = 'slices_Dir'
-    process_directory(root_dir, slice_dir)
+    # root_dir = 'R_dir_CWE121_CWE129_fgets'
+    # slice_dir = 'slices_Dir'
+    # process_directory(root_dir, slice_dir)
+    
+    d = {
+        'a': 1
+    }
+    print(d.get('b'), )
+        
     """
         a = b'\x41\x09\x42\x09\x09\x44'
         s = a.decode("UTF-8")
