@@ -1,5 +1,9 @@
 """ 250210 - 0.6 version
     기능 구현 완료 후 코드 개선을 위한 버전
+    
+    
+    250225
+    지금 dir 내부의 파일이 고정되어있는 상태, 객체지향으로 바꿀 여지가 다분하다...
 """
 import os
 import json
@@ -10,8 +14,10 @@ from typing import Dict, Set, List, Tuple
 
 warnings.filterwarnings('ignore')
 # 취약점을 유발할 수 있는 함수 리스트
-# 리스트 순회할 필요 없으니까 Dict로 처리
-L_FUNCS = ['StrNCat', 'getaddrinfo', '_ui64toa', 'fclose', 'pthread_mutex_lock', 'gets_s', 'sleep',
+# hash테이블을 통해 검색할 수 있는 점은 set, dict 동일
+# dict의 경우에는 key에 대응되는 value가 필요한 경우 사용
+# set의 경우에도 hash를 통해 값을 찾는건 동일하나, key만을 필요로 하는 경우 set을 사용함, 여기서는 취약함수 명을 key로하고 이에 대응되는 값이 필요없으니, set 자료구조를 사용 
+L_FUNCS = {'StrNCat', 'getaddrinfo', '_ui64toa', 'fclose', 'pthread_mutex_lock', 'gets_s', 'sleep',
            '_ui64tot', 'freopen_s', '_ui64tow', 'send', 'lstrcat', 'HMAC_Update', '__fxstat', 'StrCatBuff',
            '_mbscat', '_mbstok_s', '_cprintf_s', 'ldap_search_init_page', 'memmove_s', 'ctime_s', 'vswprintf',
            'vswprintf_s', '_snwprintf', '_gmtime_s', '_tccpy', '*RC6*', '_mbslwr_s', 'random',
@@ -138,9 +144,8 @@ L_FUNCS = ['StrNCat', 'getaddrinfo', '_ui64toa', 'fclose', 'pthread_mutex_lock',
            'OleDbCommand.ExecuteScalar', 'stdin', 'SqlDataSource.Delete', 'OleDbDataAdapter.Fill', 'fstream.putback',
            'IDbDataAdapter.Fill', '_wspawnl', 'fwprintf', 'sem_wait', '_unlink', 'ldap_search_ext_sW', 'signal', 'PQclear',
            'PQfinish', 'PQexec', 'PQresultStatus', 'atoi'
-           ]
+           }
 
-# 스니펫 생성에 필요한 5가지 type의 노드 쌍(인접리스트) 합집합을 구한다.
 
 
 def combine_adjacency_list(adjacency_list: Dict[str, List[Set[str]]]) -> Dict[str, Set[str]]:
@@ -160,6 +165,7 @@ def create_forward_slice(cgraph: Dict[str, Set[str]],
                          parent_method_id,
                          function_range: Dict[str, List[Set[str]]],
                          global_variable: Set[str]):
+    # 수집될 라인들은 중복해서 수집할 필요가 없고 라인 그대로 즉, key값만 사용하므로 set()을 사용한다.
     sliced_lines = set()
     line_no = str(line_no)  # line_no를 문자열로 변환
     sliced_lines.add(line_no)  # 우선 취약함수 호출 ln을 슬라이스에 추가가
@@ -174,14 +180,19 @@ def create_forward_slice(cgraph: Dict[str, Set[str]],
         cur = stack.pop()
         if cur not in sliced_lines:
             sliced_lines.add(cur)
+        # end if
         if cur not in cgraph:
             continue
+        # end if
 
         adjacents = cgraph[cur]  # adj_list key를 해당 cur로 접근해 이어지는 라인들을 불러온다
 
         for line in adjacents:
             if line not in sliced_lines:
                 stack.append(line)
+            # end if
+        # end for
+    # end while
 
     # 취약함수 노드로 직, 간접적으로 엣지가 발생하는 라인들을 스니펫에 추가한다.
     additional = True
@@ -230,28 +241,29 @@ def create_forward_slice(cgraph: Dict[str, Set[str]],
 
         cpg의 csv파일을 생성할때, 하나의 파일의 크기가 크지 않을것으로 예상되기에, 리스트화 해서 반복하는 로직으로 수정했다.
     """
-
-
 def extract_csv_data(csv_file_path) -> List[Dict[str, str]]:
     data: List[Dict[str, str]] = []
 
     with open(csv_file_path) as fp:
-        # 한줄 읽고
         header = fp.readline()
         header = header.strip()
 
         h_parts = []
 
         for hp in header.split('\t'):
-            h_parts.append(hp.strip())
+            hp_stripped = hp.strip()
+            h_parts.append(hp_stripped)
+        # end for
 
         l_parts = []
 
         for line in fp:
             line = line.strip()
-            # 애초에 헤더와 사이즈 맞지 않는 라인들은 건너 뛰고 나머지만 처리
-            l_parts.append(line.split('\t'))
+            line_stripped = line.split('\t')
+            l_parts.append(line_stripped)
+        # end for
 
+        # 확인해 보니, 추후에, line이 h_parts의 길이보다 작은 라인을 사용할 여지가 있음,
         for line in l_parts:
             instance = {}
             for i in range(len(h_parts)):
@@ -264,8 +276,9 @@ def extract_csv_data(csv_file_path) -> List[Dict[str, str]]:
                     content = ''
                 instance[h_parts[i]] = content
             data.append(instance)
+            # end for
+        # end for
         return data
-
 
 # 스니펫 수집에 필요한 type의 엣지를 찾아 노드 쌍(인접 리스트)을 생성한다.
 def create_adjacency_list(line_numbers: List[str],
@@ -362,8 +375,6 @@ def create_adjacency_list(line_numbers: List[str],
     return adjacency_list, global_variable
 
 # 추출한 nodes에서 필요한 노드 데이터를 추출한다.
-
-
 def extract_nodes_info(nodes: List[Dict[str, str]]) -> Tuple[List[str], Dict[str, str], List[str], Dict[str, List[Set[str]]]]:
     """사용하는 데이터
     Objects:
@@ -377,33 +388,38 @@ def extract_nodes_info(nodes: List[Dict[str, str]]) -> Tuple[List[str], Dict[str
     macro_candidate: List[str] = []
     function_range: Dict[str, List[Set[str]]] = {}
 
-    #
+    # 필요한 노드의 구분 없이 일단 다 수집하고있다.
     for node in nodes:
         # 이미 모든 nodes.csv의 행에는 key값은 무조건 존재한다.
         if 'key' in node:
-            node_id = node['key'].strip()
+            node_id = node['key']
+        # end if
 
         # BLOCK Type 노드의 경우 불필요한 종속성 엣지가 많이 존재하여, skip
-        if node['type'].strip() == 'BLOCK':
+        if node['type'] == 'BLOCK':
             continue
-
-        # METHOD 노드에서, line number를 가지면서 외부에서 정의되었다고 표시되는 METHOD 노드는 매크로 변수, 함수 뿐이다.
-        if node['type'].strip() == 'METHOD' and node['isExternal'] == 'True' and node.get('location', '').strip():
+        # end if
+        
+        # METHOD 노드에서, line number의 값을 가지면서 외부에서 정의되었다고 표시되는 METHOD 노드는 매크로 변수, 함수 뿐이다.
+        # 이러면 지금 값의 존재 유무만 확인인
+        if node['type'] == 'METHOD' and node['isExternal'] == 'True' and node['location'] != '':
             macro_candidate.append(node_id)
+        # end if
 
         # line number가 확인되는 노드
-        if 'location' in node.keys():
+        # 지금은 key가 있는지 확인, 우선 아예 값이 없는 경우가 아니면 조건을 통과하고 ''인 경우 무시한다.
+        if 'location' in node.keys() and node['location'] != '':
             line_num = node['location']
-            if line_num == '':
-                continue
             line_numbers.append(line_num)
             node_id_to_ln[node_id] = line_num
+        # end if
 
         # 내부에서 선언, 정의된 METHOD 노드는 속성 값으로 line의 시작과 끝을 가지고 있따.
         if 'location' and 'locationEnd' in node.keys():
             line_num_end = node['locationEnd']
 
             # line number가 확인되지 않거나, 전역에 해당하는 METHOD 노드는 skip
+            # 현재 하나하나 문자열 비교를 진행하기 때문에,,, 비효율적일지도...?
             if line_num_end == '' or node['name'] == '<global>':
                 continue
 
@@ -412,44 +428,44 @@ def extract_nodes_info(nodes: List[Dict[str, str]]) -> Tuple[List[str], Dict[str
             function_range[node_id] = [set(), set()]
             function_range[node_id][0].add(method_start)
             function_range[node_id][1].add(method_end)
-
+            #end if
+        # end if
+    # end for
     return line_numbers, node_id_to_ln, macro_candidate, function_range
 
 # 취약 함수가 호출된 노드에 대한 정보를 추출한다.
-
-
 def search_function_call(nodes) -> Set[Tuple[str, int, str]]:
     # 취약함수 호출 지점을 나타내는 오브젝트
     # 같은 라인에 동일한 함수 호출이 존재할 수 있음, Dict로 변경 key: 노드id, 값은 tuple로 
-    function_calls: Set[Tuple[str, int, str]] = set()
+    function_calls: Dict[str, Tuple[str, int, str]] = {}
 
     # 모든 노드에 대해서 순환
-    # enumerate 필요없어
-    for node_idx, node in enumerate(nodes):
-
+    for node in nodes:
         if 'type' not in node:
             continue
-        # type에 있는 값을 가져오며, 없는 경우 'UNKWON'으로 가져온다
+        #end if
+        
         ntype = node.get('type')
 
         # if조건들 한번씩 더 검토
         if ntype == 'CALL':
-            function_name = nodes[node_idx]['name']
+            function_name = node['name']
 
-            # empty string 은 어차피 0 값을 비교하는 것
+            # empty string을 비교할때는 len == 0 으로 비교하는 것이 더 효율적임임
             if function_name is None or len(function_name) == 0:
                 continue
+            # end if
 
-            # L_FUNCS에 정의된 취약함수인 경우 필요한 데이터를 수집
             if function_name in L_FUNCS:
+                
+                node_id = node['key']
                 line_no = int(node['location'])
-
-                # 함수 호출 노드가 속한 메소드의 id를 통해 추후 슬라이스 수집시 함수 내의 스니펫 생성에 사용한다.
                 parent_method_id = node['functionId']
                 
-                # 추후 더 많은 소스코드의 슬라이스 수집을 위해서, node_id를 추가할 필요가 있다.
-                function_calls.add((function_name, line_no, parent_method_id))
-            
+                function_calls[node_id] = (function_name, line_no, parent_method_id)
+            # end if
+        # end if
+    # end for     
     return function_calls
 
 # 해당 스니펫의 CWE 유형을 소스 코드 이름에서 추출한다.
@@ -460,8 +476,6 @@ def get_CWE(filename):
     return re.sub(r'[^0-9]', '', CWEID)
 
 # 추출하고자하는 라인을 소스 코드에서 직접 추출한다.
-
-
 def extract_lines_from_c_source(file_path, all_slices):
     extracted_lines = []
 
@@ -475,6 +489,7 @@ def extract_lines_from_c_source(file_path, all_slices):
                     # line에 직접 접근했으므로 인덱스를 하나 줄여서 사용한다.
                     slice_line = lines[index - 1].rstrip()
                     extracted_lines.append(slice_line)
+                # end if
     except FileNotFoundError:
         print(f'Error: File not found - {file_path}')
     except Exception as e:
@@ -487,10 +502,10 @@ def process_sub_directory(root_dir) -> List:
 
     for dir in os.listdir(root_dir):
         sub_dirs.append(dir)
+    # end for
     return sub_dirs
 
 # 서브 디렉토리 내에서 파일을 받아온다.
-
 
 def load_files(sub_dir_path):
     src_file = os.path.join(sub_dir_path, [f for f in os.listdir(
@@ -510,6 +525,7 @@ def process_directory(root_dir, slice_dir):
     slice_Dir = slice_dir
 
     # process_sub_directory: 디렉토리 하나씩 처리
+    # 근데 이게.... 뭐 바뀐게 있나? ㅋㅋㅋㅋ
     for sub_dir in sub_dirs:
 
         all_data_instance = []
@@ -528,8 +544,7 @@ def process_directory(root_dir, slice_dir):
         call_lines = search_function_call(nodes)
 
         # nodes를 순회하면서 슬라이스 추출에 필요한 요소들을 수집한다.
-        line_numbers, node_id_to_ln, macro_candidate, function_range = extract_nodes_info(
-            nodes)
+        line_numbers, node_id_to_ln, macro_candidate, function_range = extract_nodes_info(nodes)
 
         # edges를 순회하면서, 슬라이스 추출에 필요한 관계성을 확인 후 인접리스트를 생성한다.
         adjacency_list, global_variable = create_adjacency_list(
@@ -537,8 +552,10 @@ def process_directory(root_dir, slice_dir):
 
         # edge type별로 수집된 인접리스트 병합한다.
         combined_graph = combine_adjacency_list(adjacency_list)
+        
         # 수집된 취약함수 호출 라인하나당 스니펫을 생성한다.
-        for function_name, slice_ln, parent_method_id in call_lines:
+        #
+        for function_name, slice_ln, parent_method_id in call_lines.values():
 
             """ 코드 스니펫 구조
                 CWE-ID: '파일이름으로 부터 추출한 CWE-ID' 
@@ -567,19 +584,19 @@ def process_directory(root_dir, slice_dir):
             data_instance['slices'] = all_code_slices
 
             all_data_instance.append(data_instance)
+        #end for
 
         output_path = os.path.join(slice_Dir, f'slices_{sub_dir}.json')
         print(f'Attempting to write to: {output_path}')
         with open(output_path, 'w') as json_file:
             json.dump(all_data_instance, json_file)
-
+    # end for        
 
 # root_dir: 작업할 파일, slice_dir: 슬라이스 저장할 파일
 if __name__ == '__main__':
     root_dir = 'R_dir_CWE121_CWE129_fgets'
     slice_dir = 'slices_Dir'
     process_directory(root_dir, slice_dir)
-
     """
         a = b'\x41\x09\x42\x09\x09\x44'
         s = a.decode("UTF-8")
