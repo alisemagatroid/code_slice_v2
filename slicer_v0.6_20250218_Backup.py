@@ -1,18 +1,18 @@
 """ 250210 - 0.6 version
     기능 구현 완료 후 코드 개선을 위한 버전
     
+    
     250225
     지금 dir 내부의 파일이 고정되어있는 상태, 객체지향으로 바꿀 여지가 다분하다...
     
+    
     250226
     extract_node_info의 function_range의 데이터 type, tuple로 변경
-    Dict, Tuple, Set 등 자료형에 사용되는 함수들 복습 필요
+    Dict .get, .keys 차이 복습
+    
     
     250304
-    backard 슬라이스 수집 & 취약함수 printIntline으로 변경 & 파일이름, 함수이름, 속한 함수이름, 라인, 코드로 수정하기
-    if 내부의 라인을 수집하지 않고, else의 라인을 수집해야할때, if 라인 수집
-    
-    반대로 if만 수집해도 될 때는 else가 존재하는 라인은 수집하지 않아도 된다...........
+    backward 탐색을 위해 백업한 버전
 """
 import os
 import json
@@ -23,7 +23,7 @@ from typing import Dict, Set, List, Tuple
 
 warnings.filterwarnings('ignore')
 # 취약점을 유발할 수 있는 함수의 목록을 set 자료구조에 저장
-
+"""
 L_FUNCS = {'StrNCat', 'getaddrinfo', '_ui64toa', 'fclose', 'pthread_mutex_lock', 'gets_s', 'sleep',
            '_ui64tot', 'freopen_s', '_ui64tow', 'send', 'lstrcat', 'HMAC_Update', '__fxstat', 'StrCatBuff',
            '_mbscat', '_mbstok_s', '_cprintf_s', 'ldap_search_init_page', 'memmove_s', 'ctime_s', 'vswprintf',
@@ -150,11 +150,11 @@ L_FUNCS = {'StrNCat', 'getaddrinfo', '_ui64toa', 'fclose', 'pthread_mutex_lock',
            'CHtmlEditCtrl.GetDHtmlDocument', 'PostThreadMessage', 'CListCtrl.GetItemText', 'OracleDataAdapter.Update',
            'OleDbCommand.ExecuteScalar', 'stdin', 'SqlDataSource.Delete', 'OleDbDataAdapter.Fill', 'fstream.putback',
            'IDbDataAdapter.Fill', '_wspawnl', 'fwprintf', 'sem_wait', '_unlink', 'ldap_search_ext_sW', 'signal', 'PQclear',
-           'PQfinish', 'PQexec', 'PQresultStatus', 'atoi', 'printIntLine'
+           'PQfinish', 'PQexec', 'PQresultStatus', 'atoi', 
            }
 """
 L_FUNCS = {'parse_mqtt', 'mg_mqtt_broker_handle_subscribe', 'mg_mqtt_next_subscribe_topic', 'mg_dns_uncompress_name', 'mg_http_proto_data', 'mg_parse_http', 'mg_upload', 'mg_create_connection'}
-"""
+
 def combine_adjacency_list(adjacency_list: Dict[str, List[Set[str]]]) -> Dict[str, Set[str]]:
     cgraph: Dict[str, Set[str]] = {}
     for ln in adjacency_list:
@@ -169,15 +169,13 @@ def create_forward_slice(cgraph: Dict[str, Set[str]],
                          line_no,
                          parent_method_id,
                          function_range: Dict[str, Tuple[str]],
-                         global_variable: Set[str],
-                         macro_candidate: Dict[str, Tuple[str]]):
+                         global_variable: Set[str]):
     # 수집될 라인들은 중복해서 수집할 필요가 없고 라인 그대로 즉, key값만 사용하므로 set()을 사용한다.
     sliced_lines = set()
     line_no = str(line_no)  # line_no를 문자열로 변환
-    sliced_lines.add(line_no)  # 우선 취약함수 호출 ln을 슬라이스에 추가한다.
+    sliced_lines.add(line_no)  # 우선 취약함수 호출 ln을 슬라이스에 추가가
     stack = [line_no]  # 바로 리스트에 추가하고 수집 시작
-    new_global_variable_line = set() # 전역변수를 추가하기 위한 라인
-    new_macro_line = set() # 매크로 함수, 변수를 추가하기 위한 라인인
+    new_global_variable_line = set()
 
     # 어차피 메소드 범위면, 처음에 값 넣을때, int로 변환해서 넣어도 되지 않나.
     range_values = function_range[parent_method_id]
@@ -217,9 +215,6 @@ def create_forward_slice(cgraph: Dict[str, Set[str]],
                     if start_line <= key_int <= end_line:
                         sliced_lines.add(key)
                         additional = True
-                    # end if
-                # end if
-            # end if
 
             # key가 start_line ~ end_line 범위 안에 있는 경우 추가한다.
             if start_line < key_int <= end_line:
@@ -232,27 +227,13 @@ def create_forward_slice(cgraph: Dict[str, Set[str]],
                         sliced_lines.add(key)
                         sliced_lines.add(line)
                         additional = True
-                    # end if
-                # end for
-            # end if
-        # end for
+
     # 현재 수집된 라인에서, 전역변수가 위치한 라인으로 이어지는 경우 전역변수 라인을 슬라이스에 추가한다.
     for sliced_line in sliced_lines:
         is_global = cgraph[sliced_line] & global_variable
         new_global_variable_line.update(is_global)
-    # end for
+
     sliced_lines.update(new_global_variable_line)
-
-    for macro_start, _ in macro_candidate.values():
-        for sliced_line in sliced_lines:
-            if macro_start in sliced_lines:
-                continue
-            if macro_start in cgraph[sliced_line]:
-                new_macro_line.add(macro_start)
-        # end for
-    # end for
-    sliced_lines.update(new_macro_line)    
-
     # start_line은 해당 method 이름을 나타내는 라인이다.
     sliced_lines.add(str(start_line))
     sliced_lines = sorted(set(sliced_lines), key=int)
@@ -315,7 +296,7 @@ def extract_csv_data(csv_file_path) -> List[Dict[str, str]]:
 def create_adjacency_list(line_numbers: List[str],
                           node_id_to_ln: Dict[str, str],
                           edges: List[Dict[str, str]],
-                          macro_candidate: Dict[str, Tuple[str]],
+                          macro_candidate: List[str],
                           function_range: Dict[str, Tuple[str]]
                           ) -> Tuple[Dict[str, List[Set[str]]], Set[str]]:
 
@@ -371,6 +352,7 @@ def create_adjacency_list(line_numbers: List[str],
                 adjacency_list[start_ln][2].add(end_ln)
 
                 # end_ln이 function_range 내 어느 범위에도 속하지 않는 경우 global_variable에 추가한다.
+
                 in_function_range = False
                 # 각 함수의 범위 별로 순환한다.
                 for fr in function_range.values():         
@@ -398,20 +380,18 @@ def create_adjacency_list(line_numbers: List[str],
 
 # 추출한 nodes에서 필요한 노드 데이터를 추출한다.
 # type hint 수정
-def extract_nodes_info(nodes: List[Dict[str, str]]) -> Tuple[List[str], Dict[str, str], Dict[str, Tuple[str]], Dict[str, Tuple[str]], Dict[str, str]]:
+def extract_nodes_info(nodes: List[Dict[str, str]]) -> Tuple[List[str], Dict[str, str], List[str], Dict[str, List[Set[str]]]]:
     """사용하는 데이터
     Objects:
         line_numbers: 노드가 위치한 ln
-        node_id_to_ln: 노드 id에 대응되는 ln(소스코드 상의 해당 노드의 위치) 
+        node_id_to_ln: 노드 id에 대응되는 ln(소스코드 상의 해당 노드의 위치)
         macro_candidate: 매크로 변수에 해당하는 노드 id
         function_range: 소스코드 내 함수들의 범위
     """
     line_numbers: List[str] = []
     node_id_to_ln: Dict[str, str] = {}
-    #macro_candidate: List[str] = []
-    macro_candidate: Dict[str, Tuple[str]] = {}
+    macro_candidate: List[str] = []
     function_range: Dict[str, Tuple[str]] = {}
-    internal_function: Dict[str, str] = {}
 
     # 필요한 노드의 구분 없이 일단 다 수집하고있다.
     for node in nodes:
@@ -422,13 +402,20 @@ def extract_nodes_info(nodes: List[Dict[str, str]]) -> Tuple[List[str], Dict[str
         
         # 자주 사용하는 조건식은 데이터화
         node_type = node['type']
-        node_name = node['name']
         node_loc = node['location']
         # BLOCK Type 노드의 경우 불필요한 종속성 엣지가 많이 존재하여, skip
         if node_type == 'BLOCK':
             continue
         # end if
-               
+        
+        # METHOD 노드에서, line number의 값을 가지면서 외부에서 정의되었다고 표시되는 METHOD 노드는 매크로 변수, 함수 뿐이다.
+        # 이러면 지금 값의 존재 유무만 확인인
+        
+        #.get으로 가져오는 거랑 .key()로 확인 하는거랑 처리가 다르다.(Dict 함수 참고)
+        if node_type == 'METHOD' and node['isExternal'] == 'True' and len(node_loc) > 0:
+            macro_candidate.append(node_id)
+        # end if
+
         # line number가 확인되는 노드
         # 지금은 key가 있는지 확인, 우선 아예 값이 없는 경우가 아니면 조건을 통과하고 ''인 경우 무시한다.
         if len(node_loc) > 0:
@@ -443,19 +430,13 @@ def extract_nodes_info(nodes: List[Dict[str, str]]) -> Tuple[List[str], Dict[str
             # line number가 확인되지 않거나, 전역에 해당하는 METHOD 노드는 skip
             if len(line_num_end) == 0 or node['name'] == '<global>' or int(line_num_end) < 0:
                 continue
-            # end if         
+            # end if
+            
             function_range[node_id] = (node_loc, line_num_end)
-            internal_function[node_id] = node_name
-        # end if
-        
-        #.get으로 가져오는 거랑 .key()로 확인 하는거랑 처리가 다르다.(Dict 함수 참고)
-        # METHOD 노드에서, line number의 값을 가지면서 외부에서 정의되었다고 표시되는 METHOD 노드는 매크로 변수, 함수 뿐이다.
-        if node_type == 'METHOD' and node['isExternal'] == 'True' and len(node_loc) > 0:
-            # 추후 OSS 상의 코드에서 #define이 라인을 넘어갈 경우, 단순 한 라인 수집으로는 힘들 수 있음음
-            macro_candidate[node_id] = (node_loc, line_num_end)
+            
         # end if
     # end for
-    return (line_numbers, node_id_to_ln, macro_candidate, function_range, internal_function)
+    return (line_numbers, node_id_to_ln, macro_candidate, function_range)
 
 # 취약 함수가 호출된 노드에 대한 정보를 추출한다.
 def search_function_call(nodes) -> Set[Tuple[str, int, str]]:
@@ -495,7 +476,7 @@ def get_CWE(filename):
     return re.sub(r'[^0-9]', '', CWEID)
 
 # 추출하고자하는 라인을 소스 코드에서 직접 추출한다.
-def extract_lines_from_c_source(file_path, all_slices, slice_ln):
+def extract_lines_from_c_source(file_path, all_slices):
     extracted_lines = []
     line_numbers = []
 
@@ -507,10 +488,9 @@ def extract_lines_from_c_source(file_path, all_slices, slice_ln):
         with open(file_path, 'r', encoding='utf-8') as file:
             lines = file.readlines()
             for index in line_numbers:
-                if 1 <= index <= int(slice_ln):
-                    # 파일을 lines로 list화 했기 때문에 리스트에서 접근하기 위해 index - 1을 한다.
+                if 1 <= index <= len(lines):
+                    # line에 직접 접근했으므로 인덱스를 하나 줄여서 사용한다.
                     slice_line = lines[index - 1].rstrip()
-                    # 추출 했을때, indent는 그냥 공백 갯수로 처리되어있음(\t = 공백 4칸)
                     extracted_lines.append(slice_line)
                 # end if
     except FileNotFoundError:
@@ -518,6 +498,7 @@ def extract_lines_from_c_source(file_path, all_slices, slice_ln):
     except Exception as e:
         print(f'An error occurred: {e}')
     return extracted_lines
+
 
 def process_sub_directory(root_dir) -> List:
     sub_dirs: List[str] = []
@@ -527,6 +508,8 @@ def process_sub_directory(root_dir) -> List:
     # end for
     return sub_dirs
 
+# 서브 디렉토리 내에서 파일을 받아온다.
+
 def load_files(sub_dir_path):
     src_file = os.path.join(sub_dir_path, [f for f in os.listdir(
         sub_dir_path) if f.endswith('.c') or f.endswith('.cpp')][0])
@@ -534,6 +517,7 @@ def load_files(sub_dir_path):
     edges_csv = os.path.join(sub_dir_path, 'edges.csv')
 
     return src_file, nodes_csv, edges_csv
+
 
 # root_dir: 추출하기 위해 필요한 파일 위치, slice_dir: 생성된 코드 스니펫이 저장될 위치
 def process_directory(root_dir, slice_dir):
@@ -544,6 +528,7 @@ def process_directory(root_dir, slice_dir):
     slice_Dir = slice_dir
 
     # process_sub_directory: 디렉토리 하나씩 처리
+    # 근데 이게.... 뭐 바뀐게 있나? ㅋㅋㅋㅋ
     for sub_dir in sub_dirs:
 
         all_data_instance = []
@@ -562,7 +547,7 @@ def process_directory(root_dir, slice_dir):
         call_lines = search_function_call(nodes)
 
         # nodes를 순회하면서 슬라이스 추출에 필요한 요소들을 수집한다.
-        (line_numbers, node_id_to_ln, macro_candidate, function_range, internal_function) = extract_nodes_info(nodes)
+        (line_numbers, node_id_to_ln, macro_candidate, function_range) = extract_nodes_info(nodes)
 
         # edges를 순회하면서, 슬라이스 추출에 필요한 관계성을 확인 후 인접리스트를 생성한다.
         adjacency_list, global_variable = create_adjacency_list(line_numbers, node_id_to_ln, edges, macro_candidate, function_range)
@@ -576,27 +561,25 @@ def process_directory(root_dir, slice_dir):
 
             """ 코드 스니펫 구조
                 CWE-ID: '파일이름으로 부터 추출한 CWE-ID' 
-                parent_method: 취약 함수가 속해있는 함수
                 criterion: '호출된 취약 함수' 
                 line: '취약 함수 호출 위치'
                 slices: '코드 슬라이스'
             """
             data_instance = {}
             snippet = []
-            
-            sliced_lines = create_forward_slice(combined_graph, slice_ln, parent_method_id, function_range, global_variable, macro_candidate)
+
+            sliced_lines = create_forward_slice(combined_graph, slice_ln, parent_method_id, function_range, global_variable)
 
             snippet = sorted(set(sliced_lines), key=int)
 
             cwe_id = get_CWE(src_filename)
 
-            all_code_slices = extract_lines_from_c_source(src_file, snippet, slice_ln)
+            all_code_slices = extract_lines_from_c_source(src_file, snippet)
 
             if cwe_id:
                 data_instance['CWE-ID'] = 'CWE-' + cwe_id
             else:
                 data_instance['CWE-ID'] = 'CWE-Unknown'
-            data_instance['parent_method'] = internal_function[parent_method_id]
             data_instance['criterion'] = function_name
             data_instance['line'] = slice_ln
             data_instance['slices'] = all_code_slices
@@ -608,12 +591,13 @@ def process_directory(root_dir, slice_dir):
         print(f'Attempting to write to: {output_path}')
         with open(output_path, 'w') as json_file:
             json.dump(all_data_instance, json_file)
-    # end for
-            
+    # end for        
+
 # root_dir: 작업할 파일, slice_dir: 슬라이스 저장할 파일
 if __name__ == '__main__':
-    root_dir = 'R_dir_CWE121_CWE129_fgets'
-    slice_dir = 'slices_Dir'
-    # root_dir = 'R_dir_mongoose'
-    # slice_dir = 'mongoose_slices'
+    # root_dir = 'R_dir_CWE121_CWE129_fgets'
+    # slice_dir = 'slices_Dir'
+    root_dir = 'R_dir_mongoose'
+    slice_dir = 'mongoose_slices'
     process_directory(root_dir, slice_dir)
+    
