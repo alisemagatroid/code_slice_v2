@@ -4,6 +4,7 @@
     snippet에 label 추가하기 위한 calc_label 메소드를 추가
     코드 리팩토링은 0.6 version에서 진행 예정
     
+    현재 레이블링은 추가적인 코드를 제작 후, 레이블에 필요한 파일 제작 후, 1차적으로 추출된 스니펫을 분석하고 레이블 파일을 통해 진행행
 """
 import os
 import json

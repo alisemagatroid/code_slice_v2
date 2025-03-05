@@ -1,0 +1,4 @@
+{
+    "file_name": "slices_file에 있는 filename에서 가져온 값과 매칭 될 수 있게 해야, 근데 애초에 취약점 유형별로 다르게 나올거같은데" ,
+    "keyword": "buffer[data] = 1;"
+}

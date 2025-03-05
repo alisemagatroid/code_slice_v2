@@ -13,6 +13,9 @@
     if 내부의 라인을 수집하지 않고, else의 라인을 수집해야할때, if 라인 수집
     
     반대로 if만 수집해도 될 때는 else가 존재하는 라인은 수집하지 않아도 된다...........
+    
+    
+    code snippet 구조 디자인인
 """
 import os
 import json
@@ -388,7 +391,7 @@ def create_adjacency_list(line_numbers: List[str],
                     global_variable.add(end_ln)
 
             # CONTROL_STRUCTURE 노드간의 AST 엣 지를 수집해 제어문이 위치한 라인을 수집한다.
-            if (start_edge_type and end_edge_type == 'CONTROL_STRUCTURE') and edge_type == 'AST':
+            if ((start_edge_type == 'CONTROL_STRUCTURE' and end_edge_type == 'CONTROL_STRUCTURE') or end_edge_type == 'CONDITION' ) and edge_type == 'AST':
                 adjacency_list[start_ln][3].add(end_ln)
 
             # macro_candidate를 호출하는 경우 해당 라인과 CALL Edge가 이어져, 해당 라인을 수집한다.
@@ -596,6 +599,7 @@ def process_directory(root_dir, slice_dir):
                 data_instance['CWE-ID'] = 'CWE-' + cwe_id
             else:
                 data_instance['CWE-ID'] = 'CWE-Unknown'
+            data_instance['filename'] = src_filename
             data_instance['parent_method'] = internal_function[parent_method_id]
             data_instance['criterion'] = function_name
             data_instance['line'] = slice_ln
@@ -612,8 +616,10 @@ def process_directory(root_dir, slice_dir):
             
 # root_dir: 작업할 파일, slice_dir: 슬라이스 저장할 파일
 if __name__ == '__main__':
-    root_dir = 'R_dir_CWE121_CWE129_fgets'
-    slice_dir = 'slices_Dir'
+    # root_dir = 'R_dir_CWE121_CWE129_fgets'
+    # slice_dir = 'slices_Dir'
     # root_dir = 'R_dir_mongoose'
-    # slice_dir = 'mongoose_slices'
+    # slice_dir = 'mongoose_slices'\
+    root_dir = 'R_dir_CWE114_char_connect_socket'
+    slice_dir = 'slices_CWE114_char_connect_socket'
     process_directory(root_dir, slice_dir)
