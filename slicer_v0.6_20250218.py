@@ -14,8 +14,10 @@
     
     반대로 if만 수집해도 될 때는 else가 존재하는 라인은 수집하지 않아도 된다...........
     
+    code snippet 구조 디자인(summary 및 하나의 취약함수 별 하나의 파일을 추출하도록 수정)
     
-    code snippet 구조 디자인인
+    통합된 슬라이스의 filename은 source file 1번에서 따와서 .c 빼고 가져온다.
+    
 """
 import os
 import json
@@ -470,8 +472,7 @@ def search_function_call(nodes) -> Set[Tuple[str, int, str]]:
     for node in nodes:
         if 'type' not in node:
             continue
-        #end if
-        
+        #end if  
         ntype = node.get('type')
 
         # if조건들 한번씩 더 검토
@@ -482,7 +483,7 @@ def search_function_call(nodes) -> Set[Tuple[str, int, str]]:
             if function_name is None or len(function_name) == 0:
                 continue
             # end if
-
+            
             if function_name in L_FUNCS:
                 node_id = node['key']
                 line_no = int(node['location'])
@@ -505,7 +506,7 @@ def extract_lines_from_c_source(file_path, all_slices, slice_ln):
     # 추출한 line을 int값으로 변환한다.   
     for line in all_slices:
         line_numbers.append(int(line))
-    
+    # end for
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             lines = file.readlines()
@@ -531,8 +532,7 @@ def process_sub_directory(root_dir) -> List:
     return sub_dirs
 
 def load_files(sub_dir_path):
-    src_file = os.path.join(sub_dir_path, [f for f in os.listdir(
-        sub_dir_path) if f.endswith('.c') or f.endswith('.cpp')][0])
+    src_file = os.path.join(sub_dir_path, [f for f in os.listdir(sub_dir_path) if f.endswith('.c') or f.endswith('.cpp')][0])
     nodes_csv = os.path.join(sub_dir_path, 'nodes.csv')
     edges_csv = os.path.join(sub_dir_path, 'edges.csv')
 
@@ -545,24 +545,39 @@ def process_directory(root_dir, slice_dir):
     sub_dirs = process_sub_directory(root_dir)
 
     slice_Dir = slice_dir
+    all_data_instance = []
+    
+    # 첫번째 dir의 소스코드는 무조건 01이니까 여기서 slicer이름을 정하고 간다.
+    # 추후 함수로 처리
+    first_sub_dir = sub_dirs[0]
+    first_sub_dir_path = os.path.join(root_dir, first_sub_dir)
 
+    src_file, _, _ = load_files(first_sub_dir_path)  # nodes_csv, edges_csv는 무시
+    src_filename = os.path.basename(src_file)
+
+    slice_file_name = os.path.splitext(src_filename)[0]
+    base_name, _, _ = slice_file_name.rpartition('_')
+    
+    
     # process_sub_directory: 디렉토리 하나씩 처리
     for sub_dir in sub_dirs:
-
-        all_data_instance = []
 
         sub_dir_path = os.path.join(root_dir, sub_dir)
 
         src_file, nodes_csv, edges_csv = load_files(sub_dir_path)
 
         src_filename = os.path.basename(src_file)
-
+        
         # nodes, edges에 대한 데이터 수집을 위해 오브젝트화 한다.
         nodes = extract_csv_data(nodes_csv)
         edges = extract_csv_data(edges_csv)
 
         # 취약함수 호출 지점을 수집하기 위한 메소드 호출한다.
         call_lines = search_function_call(nodes)
+        
+        if not call_lines:
+            print(f"Skipping {src_filename}: No vulnerable function calls found.")
+            continue
 
         # nodes를 순회하면서 슬라이스 추출에 필요한 요소들을 수집한다.
         (line_numbers, node_id_to_ln, macro_candidate, function_range, internal_function) = extract_nodes_info(nodes)
@@ -607,19 +622,41 @@ def process_directory(root_dir, slice_dir):
 
             all_data_instance.append(data_instance)
         #end for
+        
+    ouput_data = {
+        "vulnerable_snippets_info": 0,
+        "snippets": all_data_instance
+    }
+    output_path = os.path.join(slice_Dir, f'slices_{base_name}.json')
+    print(f'Attempting to write to: {output_path}')
+    with open(output_path, 'w') as json_file:
+        json.dump(ouput_data, json_file, indent=4, ensure_ascii=False)
 
-        output_path = os.path.join(slice_Dir, f'slices_{sub_dir}.json')
-        print(f'Attempting to write to: {output_path}')
-        with open(output_path, 'w') as json_file:
-            json.dump(all_data_instance, json_file)
-    # end for
-            
-# root_dir: 작업할 파일, slice_dir: 슬라이스 저장할 파일
+# 각 유형별로 순회하기 위한 로직
+def prcoess_all_directories(root_dir, slice_dir):
+    
+    if not os.path.isdir(root_dir):
+        print(f"[ERROR] 입력된 상위 디렉토리({root_dir})가 존재하지 않습니다.")
+        return
+
+    r_dirs = []
+    
+    for r_dir in os.listdir(root_dir):
+        if os.path.isdir(os.path.join(root_dir, r_dir)):
+            r_dirs.append(r_dir)
+    
+    if len(r_dirs) == 0:
+        print(f"[WARNING] {root_dir} 내에 처리할 r_dir_* 디렉토리가 없습니다.")
+        return
+    
+    for dir in r_dirs:
+        r_dir_path = os.path.join(root_dir, dir)
+        
+        print(f"Processing: {r_dir_path} -> Saving JSON to {slice_dir}")
+        process_directory(r_dir_path, slice_dir)
+        
+# root_dir: 각 유형별로 01~84까지 csv,src가 있는 디렉토리들이 있다., slice_dir: 슬라이스를 저장할 위치이며, 유형별로 하나가 나온다 ex. fgets01~84 -> slice_fgets.json
 if __name__ == '__main__':
-    # root_dir = 'R_dir_CWE121_CWE129_fgets'
-    # slice_dir = 'slices_Dir'
-    # root_dir = 'R_dir_mongoose'
-    # slice_dir = 'mongoose_slices'\
-    root_dir = 'R_dir_CWE114_char_connect_socket'
-    slice_dir = 'slices_CWE114_char_connect_socket'
-    process_directory(root_dir, slice_dir)
+    root_dir = 'r_dirs'
+    slice_dir = 'slices_dirs'
+    prcoess_all_directories(root_dir, slice_dir)
