@@ -1,0 +1,435 @@
+﻿file#,bad_keyword
+CWE121_Stack_Based_Buffer_Overflow__char_type_overrun_memcpy,"memcpy(structCharVoid.charFirst, SRC_STR, sizeof(structCharVoid));"
+CWE121_Stack_Based_Buffer_Overflow__char_type_overrun_memmove,"memmove(structCharVoid.charFirst, SRC_STR, sizeof(structCharVoid));"
+CWE121_Stack_Based_Buffer_Overflow__CWE129_connect_socket,buffer[data] = 1;
+CWE121_Stack_Based_Buffer_Overflow__CWE129_fgets,buffer[data] = 1;
+CWE121_Stack_Based_Buffer_Overflow__CWE129_fscanf,buffer[data] = 1;
+CWE121_Stack_Based_Buffer_Overflow__CWE129_large,buffer[data] = 1;
+CWE121_Stack_Based_Buffer_Overflow__CWE129_listen_socket,buffer[data] = 1;
+CWE121_Stack_Based_Buffer_Overflow__CWE129_rand,buffer[data] = 1;
+CWE121_Stack_Based_Buffer_Overflow__CWE131_loop,data[i] = source[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE131_memcpy,"memcpy(data, source, 10*sizeof(int));"
+CWE121_Stack_Based_Buffer_Overflow__CWE131_memmove,"memmove(data, source, 10*sizeof(int));"
+CWE121_Stack_Based_Buffer_Overflow__CWE135,"(void)wcscpy(dest, data);"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_char_alloca_cpy,"strcpy(data, source);"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_char_alloca_loop,data[i] = source[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE193_char_alloca_memcpy,"memcpy(data, source, (strlen(source) + 1) * sizeof(char));"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_char_alloca_memmove,"memmove(data, source, (strlen(source) + 1) * sizeof(char));"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_char_alloca_ncpy,"strncpy(data, source, strlen(source) + 1);"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_char_declare_cpy,"strcpy(data, source);"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_char_declare_loop,data[i] = source[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE193_char_declare_memcpy,"memcpy(data, source, (strlen(source) + 1) * sizeof(char));"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_char_declare_memmove,"memmove(data, source, (strlen(source) + 1) * sizeof(char));"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_char_declare_ncpy,"strncpy(data, source, strlen(source) + 1);"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_wchar_t_alloca_cpy,"wcscpy(data, source);"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_wchar_t_alloca_loop,data[i] = source[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE193_wchar_t_alloca_memcpy,"memcpy(data, source, (wcslen(source) + 1) * sizeof(wchar_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_wchar_t_alloca_memmove,"memmove(data, source, (wcslen(source) + 1) * sizeof(wchar_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_wchar_t_alloca_ncpy,"wcsncpy(data, source, wcslen(source) + 1);"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_wchar_t_declare_cpy,"wcscpy(data, source);"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_wchar_t_declare_loop,data[i] = source[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE193_wchar_t_declare_memcpy,"memcpy(data, source, (wcslen(source) + 1) * sizeof(wchar_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_wchar_t_declare_memmove,"memmove(data, source, (wcslen(source) + 1) * sizeof(wchar_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE193_wchar_t_declare_ncpy,"wcsncpy(data, source, wcslen(source) + 1);"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_alloca_loop,data[i] = source[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_alloca_memcpy,"memcpy(data, source, 100*sizeof(char));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_alloca_memmove,"memmove(data, source, 100*sizeof(char));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_alloca_ncat,"strncat(data, source, 100);"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_alloca_ncpy,"strncpy(data, source, 100-1);"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_alloca_snprintf,"SNPRINTF(data, 100, ""%s"", source);"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_declare_loop,data[i] = source[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_declare_memcpy,"memcpy(data, source, 100*sizeof(char));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_declare_memmove,"memmove(data, source, 100*sizeof(char));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_declare_ncat,"strncat(data, source, 100);"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_declare_ncpy,"strncpy(data, source, 100-1);"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_char_declare_snprintf,"SNPRINTF(data, 100, ""%s"", source);"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_int_alloca_loop,data[i] = source[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE805_int_alloca_memcpy,"memcpy(data, source, 100*sizeof(int));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_int_alloca_memmove,"memmove(data, source, 100*sizeof(int));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_int_declare_loop,data[i] = source[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE805_int_declare_memcpy,"memcpy(data, source, 100*sizeof(int));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_int_declare_memmove,"memmove(data, source, 100*sizeof(int));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_int64_t_alloca_loop,data[i] = source[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE805_int64_t_alloca_memcpy,"memcpy(data, source, 100*sizeof(int64_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_int64_t_alloca_memmove,"memmove(data, source, 100*sizeof(int64_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_int64_t_declare_loop,data[i] = source[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE805_int64_t_declare_memcpy,"memcpy(data, source, 100*sizeof(int64_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_int64_t_declare_memmove,"memmove(data, source, 100*sizeof(int64_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_struct_alloca_loop,data[i] = source[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE805_struct_alloca_memcpy,"memcpy(data, source, 100*sizeof(twoIntsStruct));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_struct_alloca_memmove,"memmove(data, source, 100*sizeof(twoIntsStruct));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_struct_declare_loop,data[i] = source[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE805_struct_declare_memcpy,"memcpy(data, source, 100*sizeof(twoIntsStruct));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_struct_declare_memmove,"memmove(data, source, 100*sizeof(twoIntsStruct));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_wchar_t_alloca_loop,data[i] = source[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE805_wchar_t_alloca_memcpy,"memcpy(data, source, 100*sizeof(wchar_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_wchar_t_alloca_memmove,"memmove(data, source, 100*sizeof(wchar_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_wchar_t_alloca_ncat,"wcsncat(data, source, 100);"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_wchar_t_alloca_ncpy,"wcsncpy(data, source, 100-1);"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_wchar_t_alloca_snprintf,"SNPRINTF(data, 100, L""%s"", source);"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_wchar_t_declare_loop,data[i] = source[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE805_wchar_t_declare_memcpy,"memcpy(data, source, 100*sizeof(wchar_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_wchar_t_declare_memmove,"memmove(data, source, 100*sizeof(wchar_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_wchar_t_declare_ncat,"wcsncat(data, source, 100);"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_wchar_t_declare_ncpy,"wcsncpy(data, source, 100-1);"
+CWE121_Stack_Based_Buffer_Overflow__CWE805_wchar_t_declare_snprintf,"SNPRINTF(data, 100, L""%s"", source);"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_char_alloca_loop,dest[i] = data[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE806_char_alloca_memcpy,"memcpy(dest, data, strlen(data)*sizeof(char));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_char_alloca_memmove,"memmove(dest, data, strlen(data)*sizeof(char));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_char_alloca_ncat,"strncat(dest, data, strlen(data));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_char_alloca_ncpy,"strncpy(dest, data, strlen(data));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_char_alloca_snprintf,"SNPRINTF(dest, strlen(data), ""%s"", data);"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_char_declare_loop,dest[i] = data[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE806_char_declare_memcpy,"memcpy(dest, data, strlen(data)*sizeof(char));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_char_declare_memmove,"memmove(dest, data, strlen(data)*sizeof(char));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_char_declare_ncat,"strncat(dest, data, strlen(data));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_char_declare_ncpy,"strncpy(dest, data, strlen(data));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_char_declare_snprintf,"SNPRINTF(dest, strlen(data), ""%s"", data);"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_wchar_t_alloca_loop,dest[i] = data[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE806_wchar_t_alloca_memcpy,"memcpy(dest, data, wcslen(data)*sizeof(wchar_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_wchar_t_alloca_memmove,"memmove(dest, data, wcslen(data)*sizeof(wchar_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_wchar_t_alloca_ncat,"wcsncat(dest, data, wcslen(data));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_wchar_t_alloca_ncpy,"wcsncpy(dest, data, wcslen(data));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_wchar_t_alloca_snprintf,"SNPRINTF(dest, wcslen(data), L""%s"", data);"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_wchar_t_declare_loop,dest[i] = data[i];
+CWE121_Stack_Based_Buffer_Overflow__CWE806_wchar_t_declare_memcpy,"memcpy(dest, data, wcslen(data)*sizeof(wchar_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_wchar_t_declare_memmove,"memmove(dest, data, wcslen(data)*sizeof(wchar_t));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_wchar_t_declare_ncat,"wcsncat(dest, data, wcslen(data));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_wchar_t_declare_ncpy,"wcsncpy(dest, data, wcslen(data));"
+CWE121_Stack_Based_Buffer_Overflow__CWE806_wchar_t_declare_snprintf,"SNPRINTF(dest, wcslen(data), L""%s"", data);"
+CWE121_Stack_Based_Buffer_Overflow__dest_char_alloca_cat,"strcat(data, source);"
+CWE121_Stack_Based_Buffer_Overflow__dest_char_alloca_cpy,"strcpy(data, source);"
+CWE121_Stack_Based_Buffer_Overflow__dest_char_declare_cat,"strcat(data, source);"
+CWE121_Stack_Based_Buffer_Overflow__dest_char_declare_cpy,"strcpy(data, source);"
+CWE121_Stack_Based_Buffer_Overflow__dest_wchar_t_alloca_cat,"wcscat(data, source);"
+CWE121_Stack_Based_Buffer_Overflow__dest_wchar_t_alloca_cpy,"wcscpy(data, source);"
+CWE121_Stack_Based_Buffer_Overflow__dest_wchar_t_declare_cat,"wcscat(data, source);"
+CWE121_Stack_Based_Buffer_Overflow__dest_wchar_t_declare_cpy,"wcscpy(data, source);"
+CWE121_Stack_Based_Buffer_Overflow__placement_new_alloca,TwoIntsClass * classTwo = new(data) TwoIntsClass;
+CWE121_Stack_Based_Buffer_Overflow__placement_new_declare,TwoIntsClass * classTwo = new(data) TwoIntsClass;
+CWE121_Stack_Based_Buffer_Overflow__src_char_alloca_cat,"strcat(dest, data);"
+CWE121_Stack_Based_Buffer_Overflow__src_char_alloca_cpy,"strcpy(dest, data);"
+CWE121_Stack_Based_Buffer_Overflow__src_char_declare_cat,"strcat(dest, data);"
+CWE121_Stack_Based_Buffer_Overflow__src_char_declare_cpy,"strcpy(dest, data);"
+CWE121_Stack_Based_Buffer_Overflow__src_wchar_t_alloca_cat,"wcscat(dest, data);"
+CWE121_Stack_Based_Buffer_Overflow__src_wchar_t_alloca_cpy,"wcscpy(dest, data);"
+CWE121_Stack_Based_Buffer_Overflow__src_wchar_t_declare_cat,"wcscat(dest, data);"
+CWE121_Stack_Based_Buffer_Overflow__src_wchar_t_declare_cpy,"wcscpy(dest, data);"
+CWE121_Stack_Based_Buffer_Overflow__wchar_t_type_overrun_memcpy,"memcpy(structCharVoid.charFirst, SRC_STR, sizeof(structCharVoid));"
+CWE121_Stack_Based_Buffer_Overflow__wchar_t_type_overrun_memmove,"memmove(structCharVoid.charFirst, SRC_STR, sizeof(structCharVoid));"
+CWE122_Heap_Based_Buffer_Overflow__char_type_overrun_memcpy,"memcpy(structCharVoid->charFirst, SRC_STR, sizeof(*structCharVoid));"
+CWE122_Heap_Based_Buffer_Overflow__char_type_overrun_memmove,"memmove(structCharVoid->charFirst, SRC_STR, sizeof(*structCharVoid));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE129_connect_socket_01,buffer[data] = 1;
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE129_fgets_01,buffer[data] = 1;
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE129_fscanf_01,buffer[data] = 1;
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE129_large_01,buffer[data] = 1;
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE129_listen_socket_01,buffer[data] = 1;
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE129_rand_01,buffer[data] = 1;
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE193_char_cpy,"strcpy(data, source);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE193_char_loop,data[i] = source[i];
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE193_char_memcpy,"memcpy(data, source, (strlen(source) + 1) * sizeof(char));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE193_char_memmove,"memmove(data, source, (strlen(source) + 1) * sizeof(char));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE193_char_ncpy,"strncpy(data, source, strlen(source) + 1);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE193_wchar_t_cpy,"wcscpy(data, source);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE193_wchar_t_loop, data[i] = source[i];
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE193_wchar_t_memcpy,"memcpy(data, source, (wcslen(source) + 1) * sizeof(wchar_t));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE193_wchar_t_memmove,"memmove(data, source, (wcslen(source) + 1) * sizeof(wchar_t));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE193_wchar_t_ncpy,"wcsncpy(data, source, wcslen(source) + 1);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_char_loop,data[i] = source[i];
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_char_memcpy,"memcpy(data, source, 100*sizeof(char));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_char_memmove,"memmove(data, source, 100*sizeof(char));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_char_ncat,"strncat(data, source, 100);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_char_ncpy,"strncpy(data, source, 100-1);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_char_snprintf,"SNPRINTF(data, 100, ""%s"", source);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_class_loop,data[i] = source[i];
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_class_memcpy,"memcpy(data, source, 100*sizeof(TwoIntsClass));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_class_memmove,"memmove(data, source, 100*sizeof(TwoIntsClass));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_int_loop,data[i] = source[i];
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_int_memcpy,"memcpy(data, source, 100*sizeof(int));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_int_memmove,"memmove(data, source, 100*sizeof(int));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_int64_t_loop,data[i] = source[i];
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_int64_t_memcpy,"memcpy(data, source, 100*sizeof(int64_t));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_int64_t_memmove,"memmove(data, source, 100*sizeof(int64_t));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_wchar_t_loop,data[i] = source[i];
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_wchar_t_memcpy," memcpy(data, source, 100*sizeof(wchar_t));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_wchar_t_memmove_,"memmove(data, source, 100*sizeof(wchar_t));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_wchar_t_ncat,"wcsncat(data, source, 100);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_wchar_t_ncpy,"wcsncpy(data, source, 100-1);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE805_wchar_t_snprintf,"SNPRINTF(data, 100, L""%s"", source);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE806_char_loop,dest[i] = data[i];
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE806_char_memcpy,"memcpy(dest, data, strlen(data)*sizeof(char));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE806_char_memmove,"memmove(dest, data, strlen(data)*sizeof(char));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE806_char_ncat,"strncat(dest, data, strlen(data));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE806_char_ncpy,"strncpy(dest, data, strlen(data));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE806_char_snprintf,"SNPRINTF(dest, strlen(data), ""%s"", data);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE806_wchar_t_loop,dest[i] = data[i];
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE806_wchar_t_memcpy,"memcpy(dest, data, wcslen(data)*sizeof(wchar_t));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE806_wchar_t_memmove_," memmove(dest, data, wcslen(data)*sizeof(wchar_t));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE806_wchar_t_ncat,"wcsncat(dest, data, wcslen(data));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE806_wchar_t_ncpy,"wcsncpy(dest, data, wcslen(data));"
+CWE122_Heap_Based_Buffer_Overflow__cpp_CWE806_wchar_t_snprintf,"SNPRINTF(dest, wcslen(data), L""%s"", data);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_dest_char_cat,"strcat(data, source);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_dest_char_cpy,"strcpy(data, source);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_dest_wchar_t_cat,"wcscat(data, source);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_dest_wchar_t_cpy,"wcscpy(data, source);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_src_char_cat,"strcat(dest, data);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_src_char_cpy,"strcpy(dest, data);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_src_wchar_t_cat,"wcscat(dest, data);"
+CWE122_Heap_Based_Buffer_Overflow__cpp_src_wchar_t_cpy,"wcscpy(dest, data);"
+CWE122_Heap_Based_Buffer_Overflow__CWE131_loop,data[i] = source[i];
+CWE122_Heap_Based_Buffer_Overflow__CWE131_memcpy,"memcpy(data, source, 10*sizeof(int));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE129_connect_socket,buffer[data] = 1;
+CWE122_Heap_Based_Buffer_Overflow__c_CWE129_fgets,buffer[data] = 1;
+CWE122_Heap_Based_Buffer_Overflow__c_CWE129_fscanf_,buffer[data] = 1;
+CWE122_Heap_Based_Buffer_Overflow__c_CWE129_large_,buffer[data] = 1;
+CWE122_Heap_Based_Buffer_Overflow__c_CWE129_listen_socket_,buffer[data] = 1;
+CWE122_Heap_Based_Buffer_Overflow__c_CWE129_rand,buffer[data] = 1;
+CWE122_Heap_Based_Buffer_Overflow__c_CWE193_char_cpy,"strcpy(data, source);"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE193_char_loop,data[i] = source[i];
+CWE122_Heap_Based_Buffer_Overflow__c_CWE193_char_memcpy,"memcpy(data, source, (strlen(source) + 1) * sizeof(char));"
+CWE122_Heap_Based_Buffer_Overflow__CWE131_memmove,"memmove(data, source, 10*sizeof(int));"
+CWE122_Heap_Based_Buffer_Overflow__CWE135,"(void)wcscpy(dest, data);"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE193_char_memmove,"memmove(data, source, (strlen(source) + 1) * sizeof(char));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE193_char_ncpy,"strncpy(data, source, strlen(source) + 1);"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE193_wchar_t_cpy,"wcscpy(data, source);"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE193_wchar_t_loop,data[i] = source[i];
+CWE122_Heap_Based_Buffer_Overflow__c_CWE193_wchar_t_memcpy,"memcpy(data, source, (wcslen(source) + 1) * sizeof(wchar_t));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE193_wchar_t_memmove,"memmove(data, source, (wcslen(source) + 1) * sizeof(wchar_t));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE193_wchar_t_ncpy,"wcsncpy(data, source, wcslen(source) + 1);"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_char_loop,data[i] = source[i];
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_char_memcpy,"memcpy(data, source, 100*sizeof(char));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_char_memmove,"memmove(data, source, 100*sizeof(char));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_char_ncat,"strncat(data, source, 100);"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_char_ncpy,"strncpy(data, source, 100-1);"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_char_snprintf,"SNPRINTF(data, 100, ""%s"", source);"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_int_loop,data[i] = source[i];
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_int_memcpy,"memcpy(data, source, 100*sizeof(int));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_int_memmove,"memmove(data, source, 100*sizeof(int));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_int64_t_loop,data[i] = source[i];
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_int64_t_memcpy,"memcpy(data, source, 100*sizeof(int64_t));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_int64_t_memmove,"memmove(data, source, 100*sizeof(int64_t));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_struct_loop,data[i] = source[i];
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_struct_memcpy,"memcpy(data, source, 100*sizeof(twoIntsStruct));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_struct_memmove,"memmove(data, source, 100*sizeof(twoIntsStruct));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_wchar_t_loop,data[i] = source[i];
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_wchar_t_memcpy,"memcpy(data, source, 100*sizeof(wchar_t));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_wchar_t_memmove,"memmove(data, source, 100*sizeof(wchar_t));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_wchar_t_ncat,"wcsncat(data, source, 100);"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_wchar_t_ncpy,"wcsncpy(data, source, 100-1);"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE805_wchar_t_snprintf,"SNPRINTF(data, 100, L""%s"", source);"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE806_char_loop,dest[i] = data[i];
+CWE122_Heap_Based_Buffer_Overflow__c_CWE806_char_memcpy,"memcpy(dest, data, strlen(data)*sizeof(char));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE806_char_memmove,"memmove(dest, data, strlen(data)*sizeof(char));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE806_char_ncat,"strncat(dest, data, strlen(data));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE806_char_ncpy,"strncpy(dest, data, strlen(data));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE806_char_snprintf,"SNPRINTF(dest, strlen(data), ""%s"", data);"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE806_wchar_t_loop,dest[i] = data[i];
+CWE122_Heap_Based_Buffer_Overflow__c_CWE806_wchar_t_memcpy,"memcpy(dest, data, wcslen(data)*sizeof(wchar_t));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE806_wchar_t_memmove,"memmove(dest, data, wcslen(data)*sizeof(wchar_t));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE806_wchar_t_ncat,"wcsncat(dest, data, wcslen(data));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE806_wchar_t_ncpy_,"wcsncpy(dest, data, wcslen(data));"
+CWE122_Heap_Based_Buffer_Overflow__c_CWE806_wchar_t_snprintf,"SNPRINTF(dest, wcslen(data), L""%s"", data);"
+CWE122_Heap_Based_Buffer_Overflow__c_dest_char_cat,"strcat(data, source);"
+CWE122_Heap_Based_Buffer_Overflow__c_dest_char_cpy,"strcpy(data, source);"
+CWE122_Heap_Based_Buffer_Overflow__c_dest_wchar_t_cat,"wcscat(data, source);"
+CWE122_Heap_Based_Buffer_Overflow__c_dest_wchar_t_cpy,"wcscpy(data, source);"
+CWE122_Heap_Based_Buffer_Overflow__c_src_char_cat_,"strcat(dest, data);"
+CWE122_Heap_Based_Buffer_Overflow__c_src_char_cpy,"strcpy(dest, data);"
+CWE122_Heap_Based_Buffer_Overflow__c_src_wchar_t_cat_,"wcscat(dest, data);"
+CWE122_Heap_Based_Buffer_Overflow__c_src_wchar_t_cpy,"wcscpy(dest, data);"
+CWE122_Heap_Based_Buffer_Overflow__placement_new,TwoIntsClass * classTwo = new(data) TwoIntsClass;
+CWE122_Heap_Based_Buffer_Overflow__sizeof_double,printDoubleLine(*data);
+CWE122_Heap_Based_Buffer_Overflow__sizeof_int64_t,printLongLongLine(*data);
+CWE122_Heap_Based_Buffer_Overflow__sizeof_struct,printStructLine(data)
+CWE122_Heap_Based_Buffer_Overflow__wchar_t_type_overrun_memcpy,"memcpy(structCharVoid->charFirst, SRC_STR, sizeof(*structCharVoid));"
+CWE122_Heap_Based_Buffer_Overflow__wchar_t_type_overrun_memmove,"memmove(structCharVoid->charFirst, SRC_STR, sizeof(*structCharVoid));"
+CWE124_Buffer_Underwrite__char_alloca_cpy,"strcpy(data, source);"
+CWE124_Buffer_Underwrite__char_alloca_loop,data[i] = source[i];
+CWE124_Buffer_Underwrite__char_alloca_memcpy,"memcpy(data, source, 100*sizeof(char));"
+CWE124_Buffer_Underwrite__char_alloca_memmove,"memmove(data, source, 100*sizeof(char));"
+CWE124_Buffer_Underwrite__char_alloca_ncpy,"strncpy(data, source, 100-1);"
+CWE124_Buffer_Underwrite__char_declare_cpy,"strcpy(data, source);"
+CWE124_Buffer_Underwrite__char_declare_loop,data[i] = source[i];
+CWE124_Buffer_Underwrite__char_declare_memcpy,"memcpy(data, source, 100*sizeof(char));"
+CWE124_Buffer_Underwrite__char_declare_memmove,"memmove(data, source, 100*sizeof(char));"
+CWE124_Buffer_Underwrite__char_declare_ncpy,"strncpy(data, source, 100-1);"
+CWE124_Buffer_Underwrite__CWE839_connect_socket,buffer[data] = 1;
+CWE124_Buffer_Underwrite__CWE839_fgets,buffer[data] = 1;
+CWE124_Buffer_Underwrite__CWE839_fscanf,buffer[data] = 1;
+CWE124_Buffer_Underwrite__CWE839_listen_socket,buffer[data] = 1;
+CWE124_Buffer_Underwrite__CWE839_negative,buffer[data] = 1;
+CWE124_Buffer_Underwrite__CWE839_rand,buffer[data] = 1;
+CWE124_Buffer_Underwrite__malloc_char_cpy,"strcpy(data, source);"
+CWE124_Buffer_Underwrite__malloc_char_loop,data[i] = source[i];
+CWE124_Buffer_Underwrite__malloc_char_memcpy,"memcpy(data, source, 100*sizeof(char));"
+CWE124_Buffer_Underwrite__malloc_char_memmove,"memmove(data, source, 100*sizeof(char));"
+CWE124_Buffer_Underwrite__malloc_char_ncpy,"strncpy(data, source, 100-1);"
+CWE124_Buffer_Underwrite__malloc_wchar_t_cpy,"wcscpy(data, source);"
+CWE124_Buffer_Underwrite__malloc_wchar_t_loop,data[i] = source[i];
+CWE124_Buffer_Underwrite__malloc_wchar_t_memcpy,"memcpy(data, source, 100*sizeof(wchar_t));"
+CWE124_Buffer_Underwrite__malloc_wchar_t_memmove_,"memmove(data, source, 100*sizeof(wchar_t));"
+CWE124_Buffer_Underwrite__malloc_wchar_t_ncpy,"wcsncpy(data, source, 100-1);"
+CWE124_Buffer_Underwrite__new_char_cpy,"strcpy(data, source);"
+CWE124_Buffer_Underwrite__new_char_loop,data[i] = source[i];
+CWE124_Buffer_Underwrite__new_char_memcpy,"memcpy(data, source, 100*sizeof(char));"
+CWE124_Buffer_Underwrite__new_char_memmove,"memmove(data, source, 100*sizeof(char));"
+CWE124_Buffer_Underwrite__new_char_ncpy,"strncpy(data, source, 100-1);"
+CWE124_Buffer_Underwrite__new_wchar_t_cpy,"wcscpy(data, source);"
+CWE124_Buffer_Underwrite__new_wchar_t_loop,data[i] = source[i];
+CWE124_Buffer_Underwrite__new_wchar_t_memcpy,"memcpy(data, source, 100*sizeof(wchar_t));"
+CWE124_Buffer_Underwrite__new_wchar_t_memmove_,"memmove(data, source, 100*sizeof(wchar_t));"
+CWE124_Buffer_Underwrite__new_wchar_t_ncpy,"wcsncpy(data, source, 100-1);"
+CWE124_Buffer_Underwrite__wchar_t_alloca_cpy,"wcscpy(data, source);"
+CWE124_Buffer_Underwrite__wchar_t_alloca_loop,data[i] = source[i];
+CWE124_Buffer_Underwrite__wchar_t_alloca_memcpy,"memcpy(data, source, 100*sizeof(wchar_t));"
+CWE124_Buffer_Underwrite__wchar_t_alloca_memmove,"memmove(data, source, 100*sizeof(wchar_t));"
+CWE124_Buffer_Underwrite__wchar_t_alloca_ncpy,"wcsncpy(data, source, 100-1);"
+CWE124_Buffer_Underwrite__wchar_t_declare_cpy,"wcscpy(data, source);"
+CWE124_Buffer_Underwrite__wchar_t_declare_loop_,data[i] = source[i];
+CWE124_Buffer_Underwrite__wchar_t_declare_memcpy,"memcpy(data, source, 100*sizeof(wchar_t));"
+CWE124_Buffer_Underwrite__wchar_t_declare_memmove,"memmove(data, source, 100*sizeof(wchar_t));"
+CWE124_Buffer_Underwrite__wchar_t_declare_ncpy,"wcsncpy(data, source, 100-1);"
+CWE126_Buffer_Overread__char_alloca_loop_,dest[i] = data[i];
+CWE126_Buffer_Overread__char_alloca_memcpy,"memcpy(dest, data, strlen(dest)*sizeof(char));"
+CWE126_Buffer_Overread__char_alloca_memmove,"memmove(dest, data, strlen(dest)*sizeof(char));"
+CWE126_Buffer_Overread__char_declare_loop,dest[i] = data[i];
+CWE126_Buffer_Overread__char_declare_memcpy,"memcpy(dest, data, strlen(dest)*sizeof(char));"
+CWE126_Buffer_Overread__char_declare_memmove_,"memmove(dest, data, strlen(dest)*sizeof(char));"
+CWE126_Buffer_Overread__CWE129_connect_socket,printIntLine(buffer[data]);
+CWE126_Buffer_Overread__CWE129_fgets,printIntLine(buffer[data]);
+CWE126_Buffer_Overread__CWE129_fscanf,printIntLine(buffer[data]);
+CWE126_Buffer_Overread__CWE129_large,printIntLine(buffer[data]);
+CWE126_Buffer_Overread__CWE129_listen_socket,printIntLine(buffer[data]);
+CWE126_Buffer_Overread__CWE129_rand,printIntLine(buffer[data]);
+CWE126_Buffer_Overread__CWE170_char_loop_,printLine(dest);
+CWE126_Buffer_Overread__CWE170_char_memcpy,printLine(dest);
+CWE126_Buffer_Overread__CWE170_char_strncpy,printLine(dest);
+CWE126_Buffer_Overread__CWE170_wchar_t_loop,printWLine(dest);
+CWE126_Buffer_Overread__CWE170_wchar_t_memcpy,printWLine(dest);
+CWE126_Buffer_Overread__CWE170_wchar_t_strncpy,printWLine(dest);
+CWE126_Buffer_Overread__malloc_char_loop,dest[i] = data[i];
+CWE126_Buffer_Overread__malloc_char_memcpy,"memcpy(dest, data, strlen(dest)*sizeof(char));"
+CWE126_Buffer_Overread__malloc_char_memmove,"memmove(dest, data, strlen(dest)*sizeof(char));"
+CWE126_Buffer_Overread__malloc_wchar_t_loop_,dest[i] = data[i];
+CWE126_Buffer_Overread__malloc_wchar_t_memcpy_,"memcpy(dest, data, wcslen(dest)*sizeof(wchar_t));"
+CWE126_Buffer_Overread__malloc_wchar_t_memmove,"memmove(dest, data, wcslen(dest)*sizeof(wchar_t));"
+CWE126_Buffer_Overread__new_char_loop,dest[i] = data[i];
+CWE126_Buffer_Overread__new_char_memcpy,"memcpy(dest, data, strlen(dest)*sizeof(char));"
+CWE126_Buffer_Overread__new_char_memmove,"memmove(dest, data, strlen(dest)*sizeof(char));"
+CWE126_Buffer_Overread__new_wchar_t_loop,dest[i] = data[i];
+CWE126_Buffer_Overread__new_wchar_t_memcpy,"memcpy(dest, data, wcslen(dest)*sizeof(wchar_t));"
+CWE126_Buffer_Overread__new_wchar_t_memmove,"memmove(dest, data, wcslen(dest)*sizeof(wchar_t));"
+CWE126_Buffer_Overread__wchar_t_alloca_loop,dest[i] = data[i];
+CWE126_Buffer_Overread__wchar_t_alloca_memcpy,"memcpy(dest, data, wcslen(dest)*sizeof(wchar_t));"
+CWE126_Buffer_Overread__wchar_t_alloca_memmove_,"memmove(dest, data, wcslen(dest)*sizeof(wchar_t));"
+CWE126_Buffer_Overread__wchar_t_declare_loop,dest[i] = data[i];
+CWE126_Buffer_Overread__wchar_t_declare_memcpy,"memcpy(dest, data, wcslen(dest)*sizeof(wchar_t));"
+CWE126_Buffer_Overread__wchar_t_declare_memmove,"memmove(dest, data, wcslen(dest)*sizeof(wchar_t));"
+CWE127_Buffer_Underread__char_alloca_cpy,"strcpy(dest, data);"
+CWE127_Buffer_Underread__char_alloca_loop,dest[i] = data[i];
+CWE127_Buffer_Underread__char_alloca_memcpy,"memcpy(dest, data, 100*sizeof(char));"
+CWE127_Buffer_Underread__char_alloca_memmove,"memmove(dest, data, 100*sizeof(char));"
+CWE127_Buffer_Underread__char_alloca_ncpy,"strncpy(dest, data, strlen(dest));"
+CWE127_Buffer_Underread__char_declare_cpy,"strcpy(dest, data);"
+CWE127_Buffer_Underread__char_declare_loop,dest[i] = data[i];
+CWE127_Buffer_Underread__char_declare_memcpy,"memcpy(dest, data, 100*sizeof(char));"
+CWE127_Buffer_Underread__char_declare_memmove,"memmove(dest, data, 100*sizeof(char));"
+CWE127_Buffer_Underread__char_declare_ncpy,"strncpy(dest, data, strlen(dest));"
+CWE127_Buffer_Underread__CWE839_connect_socket,printIntLine(buffer[data]);
+CWE127_Buffer_Underread__CWE839_fgets,printIntLine(buffer[data]);
+CWE127_Buffer_Underread__CWE839_fscanf,printIntLine(buffer[data]);
+CWE127_Buffer_Underread__CWE839_listen_socket,printIntLine(buffer[data]);
+CWE127_Buffer_Underread__CWE839_negative,printIntLine(buffer[data]);
+CWE127_Buffer_Underread__CWE839_rand,printIntLine(buffer[data]);
+CWE127_Buffer_Underread__malloc_char_cpy,"strcpy(dest, data);"
+CWE127_Buffer_Underread__malloc_char_loop,dest[i] = data[i];
+CWE127_Buffer_Underread__malloc_char_memcpy,"memcpy(dest, data, 100*sizeof(char));"
+CWE127_Buffer_Underread__malloc_char_memmove,"memmove(dest, data, 100*sizeof(char));"
+CWE127_Buffer_Underread__malloc_char_ncpy,"strncpy(dest, data, strlen(dest));"
+CWE127_Buffer_Underread__malloc_wchar_t_cpy,"wcscpy(dest, data);"
+CWE127_Buffer_Underread__malloc_wchar_t_loop,dest[i] = data[i];
+CWE127_Buffer_Underread__malloc_wchar_t_memcpy,"memcpy(dest, data, 100*sizeof(wchar_t));"
+CWE127_Buffer_Underread__malloc_wchar_t_memmove,"memmove(dest, data, 100*sizeof(wchar_t));"
+CWE127_Buffer_Underread__malloc_wchar_t_ncpy,"wcsncpy(dest, data, wcslen(dest));"
+CWE127_Buffer_Underread__new_char_cpy,"strcpy(dest, data);"
+CWE127_Buffer_Underread__new_char_loop,dest[i] = data[i];
+CWE127_Buffer_Underread__new_char_memcpy,"memcpy(dest, data, 100*sizeof(char));"
+CWE127_Buffer_Underread__new_char_memmove,"memmove(dest, data, 100*sizeof(char));"
+CWE127_Buffer_Underread__new_char_ncpy,"strncpy(dest, data, strlen(dest));"
+CWE127_Buffer_Underread__new_wchar_t_cpy,"wcscpy(dest, data);"
+CWE127_Buffer_Underread__new_wchar_t_loop,dest[i] = data[i];
+CWE127_Buffer_Underread__new_wchar_t_memcpy,"memcpy(dest, data, 100*sizeof(wchar_t));"
+CWE127_Buffer_Underread__new_wchar_t_memmove,"memmove(dest, data, 100*sizeof(wchar_t));"
+CWE127_Buffer_Underread__new_wchar_t_ncpy,"wcsncpy(dest, data, wcslen(dest));"
+CWE127_Buffer_Underread__wchar_t_alloca_cpy,"wcscpy(dest, data);"
+CWE127_Buffer_Underread__wchar_t_alloca_loop,dest[i] = data[i];
+CWE127_Buffer_Underread__wchar_t_alloca_memcpy,"memcpy(dest, data, 100*sizeof(wchar_t));"
+CWE127_Buffer_Underread__wchar_t_alloca_memmove_,"memmove(dest, data, 100*sizeof(wchar_t));"
+CWE127_Buffer_Underread__wchar_t_alloca_ncpy,"wcsncpy(dest, data, wcslen(dest));"
+CWE127_Buffer_Underread__wchar_t_declare_cpy,"wcscpy(dest, data);"
+CWE127_Buffer_Underread__wchar_t_declare_loop,dest[i] = data[i];
+CWE127_Buffer_Underread__wchar_t_declare_memcpy,"memcpy(dest, data, 100*sizeof(wchar_t));"
+CWE127_Buffer_Underread__wchar_t_declare_memmove,"memmove(dest, data, 100*sizeof(wchar_t));"
+CWE127_Buffer_Underread__wchar_t_declare_ncpy,"wcsncpy(dest, data, wcslen(dest));"
+CWE176_Improper_Handling_of_Unicode_Encoding__w32,"WideCharToMultiByte(CP_ACP, WC_COMPOSITECHECK, data, -1, convertedText, requiredSize , 0, 0);"
+CWE194_Unexpected_Sign_Extension__connect_socket_malloc,char * dataBuffer = (char *)malloc(data);
+CWE194_Unexpected_Sign_Extension__connect_socket_memcpy,"memcpy(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__connect_socket_memmove,"memmove(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__connect_socket_strncpy,"strncpy(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__fgets_malloc,char * dataBuffer = (char *)malloc(data);
+CWE194_Unexpected_Sign_Extension__fgets_memcpy,"memcpy(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__fgets_memmove,"memmove(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__fgets_strncpy,"strncpy(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__fscanf_malloc,char * dataBuffer = (char *)malloc(data);
+CWE194_Unexpected_Sign_Extension__fscanf_memcpy,"memcpy(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__fscanf_memmove,"memmove(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__fscanf_strncpy,"strncpy(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__listen_socket_malloc,char * dataBuffer = (char *)malloc(data);
+CWE194_Unexpected_Sign_Extension__listen_socket_memcpy,"memcpy(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__listen_socket_memmove,"memmove(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__listen_socket_strncpy,"strncpy(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__negative_malloc,char * dataBuffer = (char *)malloc(data);
+CWE194_Unexpected_Sign_Extension__negative_memcpy,"memcpy(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__negative_memmove,"memmove(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__negative_strncpy,"strncpy(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__rand_malloc,char * dataBuffer = (char *)malloc(data);
+CWE194_Unexpected_Sign_Extension__rand_memcpy,"memcpy(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__rand_memmove,"memmove(dest, source, data);"
+CWE194_Unexpected_Sign_Extension__rand_strncpy,"strncpy(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__connect_socket_malloc, char * dataBuffer = (char *)malloc(data);
+CWE195_Signed_to_Unsigned_Conversion_Error__connect_socket_memcpy,"memcpy(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__connect_socket_memmove,"memmove(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__connect_socket_strncpy,"strncpy(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__fgets_malloc,char * dataBuffer = (char *)malloc(data);
+CWE195_Signed_to_Unsigned_Conversion_Error__fgets_memcpy,"memcpy(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__fgets_memmove,"memmove(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__fgets_strncpy,"strncpy(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__fscanf_malloc,char * dataBuffer = (char *)malloc(data);
+CWE195_Signed_to_Unsigned_Conversion_Error__fscanf_memcpy,"memcpy(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__fscanf_memmove,"memmove(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__fscanf_strncpy,"strncpy(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__listen_socket_malloc_01,char * dataBuffer = (char *)malloc(data);
+CWE195_Signed_to_Unsigned_Conversion_Error__listen_socket_memcpy,"memcpy(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__listen_socket_memmove,"memmove(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__listen_socket_strncpy,"strncpy(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__negative_malloc,char * dataBuffer = (char *)malloc(data);
+CWE195_Signed_to_Unsigned_Conversion_Error__negative_memcpy,"memcpy(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__negative_memmove,"memmove(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__negative_strncpy,"strncpy(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__rand_malloc,char * dataBuffer = (char *)malloc(data);
+CWE195_Signed_to_Unsigned_Conversion_Error__rand_memcpy,"memcpy(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__rand_memmove,"memmove(dest, source, data);"
+CWE195_Signed_to_Unsigned_Conversion_Error__rand_strncpy,"strncpy(dest, source, data);"
+CWE242_Use_of_Inherently_Dangerous_Function__basic,result = gets(dest);
+CWE680_Integer_Overflow_to_Buffer_Overflow__malloc_connect_socket_,intPointer = (int*)malloc(data * sizeof(int));
+CWE680_Integer_Overflow_to_Buffer_Overflow__malloc_fgets, intPointer = (int*)malloc(data * sizeof(int));
+CWE680_Integer_Overflow_to_Buffer_Overflow__malloc_fixed,intPointer = (int*)malloc(data * sizeof(int));
+CWE680_Integer_Overflow_to_Buffer_Overflow__malloc_fscanf,intPointer = (int*)malloc(data * sizeof(int));
+CWE680_Integer_Overflow_to_Buffer_Overflow__malloc_listen_socket,intPointer = (int*)malloc(data * sizeof(int));
+CWE680_Integer_Overflow_to_Buffer_Overflow__malloc_rand,intPointer = (int*)malloc(data * sizeof(int));
+CWE680_Integer_Overflow_to_Buffer_Overflow__new_connect_socket,intPointer = (int*)new char[dataBytes];
+CWE680_Integer_Overflow_to_Buffer_Overflow__new_fgets,intPointer = (int*)new char[dataBytes];
+CWE680_Integer_Overflow_to_Buffer_Overflow__new_fixed,intPointer = (int*)new char[dataBytes];
+CWE680_Integer_Overflow_to_Buffer_Overflow__new_fscanf,intPointer = (int*)new char[dataBytes];
+CWE680_Integer_Overflow_to_Buffer_Overflow__new_listen_socket,intPointer = (int*)new char[dataBytes];
+CWE680_Integer_Overflow_to_Buffer_Overflow__new_rand, intPointer = (int*)new char[dataBytes];

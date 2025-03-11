@@ -18,6 +18,8 @@
     
     통합된 슬라이스의 filename은 source file 1번에서 따와서 .c 빼고 가져온다.
     
+    지금 CPG 파싱하면서, 몇몇 라인들이 침범하는 문제가 발생생
+    
 """
 import os
 import json
@@ -155,7 +157,7 @@ L_FUNCS = {'StrNCat', 'getaddrinfo', '_ui64toa', 'fclose', 'pthread_mutex_lock',
            'CHtmlEditCtrl.GetDHtmlDocument', 'PostThreadMessage', 'CListCtrl.GetItemText', 'OracleDataAdapter.Update',
            'OleDbCommand.ExecuteScalar', 'stdin', 'SqlDataSource.Delete', 'OleDbDataAdapter.Fill', 'fstream.putback',
            'IDbDataAdapter.Fill', '_wspawnl', 'fwprintf', 'sem_wait', '_unlink', 'ldap_search_ext_sW', 'signal', 'PQclear',
-           'PQfinish', 'PQexec', 'PQresultStatus', 'atoi', 'printIntLine'
+           'PQfinish', 'PQexec', 'PQresultStatus', 'atoi', 'printIntLine', 'printLine'
            }
 """
 L_FUNCS = {'parse_mqtt', 'mg_mqtt_broker_handle_subscribe', 'mg_mqtt_next_subscribe_topic', 'mg_dns_uncompress_name', 'mg_http_proto_data', 'mg_parse_http', 'mg_upload', 'mg_create_connection'}
@@ -499,6 +501,7 @@ def get_CWE(filename):
     return re.sub(r'[^0-9]', '', CWEID)
 
 # 추출하고자하는 라인을 소스 코드에서 직접 추출한다.
+# 소스파일 뜯어올때 특문 뜯어올때 \가 붙는 경우가 있는데, 이는 해결해야한다.
 def extract_lines_from_c_source(file_path, all_slices, slice_ln):
     extracted_lines = []
     line_numbers = []
@@ -555,6 +558,7 @@ def process_directory(root_dir, slice_dir):
     src_file, _, _ = load_files(first_sub_dir_path)  # nodes_csv, edges_csv는 무시
     src_filename = os.path.basename(src_file)
 
+    # 슬라이스 파일네임 다시보자
     slice_file_name = os.path.splitext(src_filename)[0]
     base_name, _, _ = slice_file_name.rpartition('_')
     
