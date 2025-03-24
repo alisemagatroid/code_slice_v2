@@ -18,8 +18,10 @@
     
     통합된 슬라이스의 filename은 source file 1번에서 따와서 .c 빼고 가져온다.
     
-    지금 CPG 파싱하면서, 몇몇 라인들이 침범하는 문제가 발생생
-    
+    250319
+    fgets이외의 여러 취약점 코드를 다루다 보니, 겹치는 criterion도 많아지고, 추가해야될것도 많아짐
+    그리고 함수간 호출 관계가 어느정도 적용되어있다.
+
 """
 import os
 import json
@@ -157,9 +159,10 @@ L_FUNCS = {'StrNCat', 'getaddrinfo', '_ui64toa', 'fclose', 'pthread_mutex_lock',
            'CHtmlEditCtrl.GetDHtmlDocument', 'PostThreadMessage', 'CListCtrl.GetItemText', 'OracleDataAdapter.Update',
            'OleDbCommand.ExecuteScalar', 'stdin', 'SqlDataSource.Delete', 'OleDbDataAdapter.Fill', 'fstream.putback',
            'IDbDataAdapter.Fill', '_wspawnl', 'fwprintf', 'sem_wait', '_unlink', 'ldap_search_ext_sW', 'signal', 'PQclear',
-           'PQfinish', 'PQexec', 'PQresultStatus', 'atoi', 'printIntLine', 'printLine'
+           'PQfinish', 'PQexec', 'PQresultStatus', 'atoi', 'printIntLine', 'printLine', 'printWLine', '<operator>.delete', 'printStructLine' 
            }
 """
+mongoose 소스코드 용 L_FUNCS
 L_FUNCS = {'parse_mqtt', 'mg_mqtt_broker_handle_subscribe', 'mg_mqtt_next_subscribe_topic', 'mg_dns_uncompress_name', 'mg_http_proto_data', 'mg_parse_http', 'mg_upload', 'mg_create_connection'}
 """
 def combine_adjacency_list(adjacency_list: Dict[str, List[Set[str]]]) -> Dict[str, Set[str]]:
@@ -500,6 +503,23 @@ def get_CWE(filename):
     CWEID = filename.split('_')[0]
     return re.sub(r'[^0-9]', '', CWEID)
 
+
+    """
+    주석을 제거하는 함수.
+    - C++ 스타일의 `//` 주석을 제거
+    - C 스타일의 `/* ... */` 주석을 제거
+    """
+def remove_comments(line: str) -> str:
+
+    # `//` 주석 제거 (한 줄 주석)
+    line = re.sub(r'//.*', '', line)
+
+    # `/* ... */` 주석 제거 (블록 주석)
+    line = re.sub(r'/\*.*?\*/', '', line)
+
+    return line.rstrip()
+
+
 # 추출하고자하는 라인을 소스 코드에서 직접 추출한다.
 # 소스파일 뜯어올때 특문 뜯어올때 \가 붙는 경우가 있는데, 이는 해결해야한다.
 def extract_lines_from_c_source(file_path, all_slices, slice_ln):
@@ -517,8 +537,12 @@ def extract_lines_from_c_source(file_path, all_slices, slice_ln):
                 if 1 <= index <= int(slice_ln):
                     # 파일을 lines로 list화 했기 때문에 리스트에서 접근하기 위해 index - 1을 한다.
                     slice_line = lines[index - 1].rstrip()
+                    
+                    # 주석 제거
+                    cleaned_line = remove_comments(slice_line)
+                    
                     # 추출 했을때, indent는 그냥 공백 갯수로 처리되어있음(\t = 공백 4칸)
-                    extracted_lines.append(slice_line)
+                    extracted_lines.append(cleaned_line)
                 # end if
     except FileNotFoundError:
         print(f'Error: File not found - {file_path}')
@@ -552,16 +576,20 @@ def process_directory(root_dir, slice_dir):
     
     # 첫번째 dir의 소스코드는 무조건 01이니까 여기서 slicer이름을 정하고 간다.
     # 추후 함수로 처리
-    first_sub_dir = sub_dirs[0]
-    first_sub_dir_path = os.path.join(root_dir, first_sub_dir)
+    # first_sub_dir = sub_dirs[0]
+    # first_sub_dir_path = os.path.join(root_dir, first_sub_dir)
 
-    src_file, _, _ = load_files(first_sub_dir_path)  # nodes_csv, edges_csv는 무시
-    src_filename = os.path.basename(src_file)
-
-    # 슬라이스 파일네임 다시보자
-    slice_file_name = os.path.splitext(src_filename)[0]
-    base_name, _, _ = slice_file_name.rpartition('_')
     
+    # # 현재 해당 코드는 Sard처럼 동일한 유형의 취약점 코드 여러개를 하나의 slice 파일로 만들기 위한 코드
+    # src_file, _, _ = load_files(first_sub_dir_path)  # nodes_csv, edges_csv는 무시
+    # src_filename = os.path.basename(src_file)
+
+    # # 파일이 디렉토리에 하나만 있을 경우 base_name을 구하지 않고 slice_file_name을 넘긴다.
+    # slice_file_name = os.path.splitext(src_filename)[0]
+    # base_name, _, _ = slice_file_name.rpartition('_')
+    
+    
+    slice_name = os.path.basename(root_dir)
     
     # process_sub_directory: 디렉토리 하나씩 처리
     for sub_dir in sub_dirs:
@@ -631,7 +659,7 @@ def process_directory(root_dir, slice_dir):
         "vulnerable_snippets_info": 0,
         "snippets": all_data_instance
     }
-    output_path = os.path.join(slice_Dir, f'slices_{base_name}.json')
+    output_path = os.path.join(slice_Dir, f'slices_{slice_name}.json')
     print(f'Attempting to write to: {output_path}')
     with open(output_path, 'w') as json_file:
         json.dump(ouput_data, json_file, indent=4, ensure_ascii=False)
@@ -661,6 +689,6 @@ def prcoess_all_directories(root_dir, slice_dir):
         
 # root_dir: 각 유형별로 01~84까지 csv,src가 있는 디렉토리들이 있다., slice_dir: 슬라이스를 저장할 위치이며, 유형별로 하나가 나온다 ex. fgets01~84 -> slice_fgets.json
 if __name__ == '__main__':
-    root_dir = 'r_dirs'
-    slice_dir = 'slices_dirs'
+    root_dir = 'R_dir_mongoose'
+    slice_dir = 'slices_mongoose'
     prcoess_all_directories(root_dir, slice_dir)

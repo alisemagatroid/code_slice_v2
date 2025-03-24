@@ -1,7 +1,0 @@
-
-[
-    {"file_name": "slices_CWE121_Stack_Based_Buffer_Overflow__CWE129_fgets", "keyword": "buffer[data] = 1;"}, 
-    {"file_name": "", "keyword": ""} 
-
-]
-    
